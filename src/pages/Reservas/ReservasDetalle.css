@@ -1,0 +1,56 @@
+
+
+
+
+/* --- Contenedor Principal --- */
+.reservas-detalle-container {
+    width: 90%;
+    margin-inline: auto;
+    margin-top: var(--spacing-md);
+    padding: var(--spacing-md);
+    background-color: var(--color-surface-primary); /* Fondo gris claro */
+    border: 1px solid var(--color-border-primary); /* Borde sutil */
+    box-shadow: var(--shadow-md); /* Sombra para dar profundidad */
+    min-height: 100vh;
+    gap: 1rem;
+    border-radius: var(--border-radius-md);
+}
+
+.reservas-detalle-header{
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+
+
+/* --- Tarjeta de Información Principal --- */
+.reserva-info {
+    display: flex;
+    /* Crea dos columnas en pantallas grandes y una en pequeñas */
+    flex-direction: column;
+    gap: 2rem;
+    background-color: var(--color-surface-tertiary);
+    padding: var(--spacing-md);
+    border: 1px solid var(--color-border-tertiary);
+    border-radius: var(--border-radius-md);
+    box-shadow: var(--shadow-md);
+}
+
+
+
+/* --- Estilos para los párrafos de información --- */
+.reserva-info p {
+    color: var(--color-text-secondary);
+    line-height: 1.7;
+    margin-bottom: 0.75rem;
+}
+
+.reserva-info p strong {
+    color: var(--color-text-primary);
+    margin-right: 0.5rem;
+    font-weight: var(--font-weight-bold);
+}
+
+
+

@@ -1,0 +1,40 @@
+/* Estilos para el contenedor principal de la página de reservas */
+.reservas-container {
+    padding: 1rem;
+    background-color: var(--color-surface-primary); /* Un color de fondo suave y neutro */
+    min-height: 50vh; /* Asegura que ocupe al menos toda la altura de la pantalla */
+    display: flex;
+    flex-direction: column;
+    box-sizing: border-box;
+    gap: 1rem;
+}
+
+.mis-reservas-title {
+    color: var(--color-text-primary); /* Un color oscuro pero no negro puro */
+    margin-bottom: 0.5rem;
+}
+
+
+
+/* Estilos para la lista con scroll horizontal que usa el hook useDragToScroll */
+.reservas-list{
+    display: flex;
+    flex-direction: column; /* Cambia la dirección del flujo a vertical */
+}
+
+/* Ocultar la barra de scroll para un look más limpio, ya que se puede arrastrar */
+.reservas-list::-webkit-scrollbar {
+    display: none;
+}
+
+.reservas-list {
+    -ms-overflow-style: none;  /* Para IE y Edge */
+    scrollbar-width: none;  /* Para Firefox */
+}
+
+.reservas-list-inner {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+

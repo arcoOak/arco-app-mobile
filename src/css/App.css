@@ -1,0 +1,374 @@
+/* Created by Tivotal */
+
+
+
+/* ==========================================================================
+   1. IMPORTS Y CONFIGURACIÓN INICIAL
+   ========================================================================== */
+
+/* Google Fonts (Poppins) */
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap");
+
+/* ==========================================================================
+   2. VARIABLES CSS (DESIGN TOKENS)
+   ========================================================================== */
+
+:root {
+  /* ------------------------------
+   * Paleta de Colores (Light Theme)
+   * ------------------------------ */
+  /* Brand */
+  --color-brand-primary: #4070f4;
+  --color-brand-primary-light: #e2e2fb;
+  --color-brand-secondary: #0984e3;
+
+  /* Text */
+  --color-text-primary: #1F2936;
+  --color-text-secondary: #4B5563;
+  --color-text-tertiary: #6B7280;
+  --color-text-contrast: #FFFFFF;
+  --color-text-placeholder: #798EAE;
+  --color-text-brand: var(--color-brand-primary);
+
+  /* Surface / Background */
+  --color-surface-primary: #f9fafb;
+  --color-surface-secondary: #ECECFD;
+  --color-surface-tertiary: #FFFFFF;
+  --color-surface-contrast: #1F2936; /* Para elementos sobre fondos de color */
+  --color-surface-overlay: rgba(0, 0, 0, 0.5);
+  
+  /* Borders */
+  --color-border-primary: #E2E8F0;
+  --color-border-secondary: #3B475C;
+  --color-border-tertiary: #CBD5E1;
+  --color-border-interactive: var(--color-brand-primary);
+  
+
+  /* Semantic */
+  --color-success: #28a745;
+  --color-success-bg: #d1e7dd;
+  --color-warning: #ffc107;
+  --color-warning-bg: #fff3cd;
+  --color-danger: #dc3545;
+  --color-danger-bg: #f8d7da;
+  --color-info: #0dcaf0;
+  --color-info-bg: #cff4fc;
+  
+  /* Neutral */
+  --color-white: #FFFFFF;
+
+  --color-black: #000000;
+
+  --color-transparent: transparent;
+
+  --color-active: #007bff;
+
+  --color-border-active: #0056b3; 
+
+
+  /* Botones */
+  --color-button-primary: #4070f4;
+  --color-button-secondary: #0984e3;
+  --color-button-tertiary: #74b9ff;
+  --color-button-neutral: #b2bec3;
+
+  --color-button-volver: #0984e3;
+
+  --color-text-button-primary: #FFFFFF;
+  --color-text-button-secondary: #FFFFFF;
+  --color-text-button-tertiary: #FFFFFF;
+  --color-text-button-neutral: #2d3436;
+
+  /* ------------------------------
+   * Tipografía
+   * ------------------------------ */
+  --font-family-sans: "Poppins", sans-serif;
+  --font-size-xs: 0.75rem;  /* 12px */
+  --font-size-sm: 0.875rem; /* 14px */
+  --font-size-base: 1rem;     /* 16px */
+  --font-size-md: 1.15rem;  /* 18px */
+  --font-size-lg: 1.25rem;  /* 20px */
+  --font-size-xl: 1.5rem;   /* 24px */
+  --font-size-xxl: 2rem;    /* 32px */
+  --font-weight-regular: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+
+  /* ------------------------------
+   * Espaciado (Spacing)
+   * ------------------------------ */
+  --spacing-xs: 4px;
+  --spacing-sm: 8px;
+  --spacing-md: 16px;
+  --spacing-lg: 24px;
+  --spacing-xl: 32px;
+  --spacing-xxl: 48px;
+
+  /* ------------------------------
+   * Bordes y Sombras
+   * ------------------------------ */
+  --border-radius-sm: 4px;
+  --border-radius-md: 8px;
+  --border-radius-lg: 16px;
+  --border-radius-pill: 50px;
+  --border-radius-full: 9999px;
+
+  --border-color: #E2E8F0;
+
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
+  --shadow-inset: inset 0 1px 3px rgba(0, 0, 0, 0.05);
+
+  /* ------------------------------
+   * Transiciones y Layout
+   * ------------------------------ */
+  --transition-duration: 0.3s;
+  --transition-timing: ease-in-out;
+  --grid-gutter-x: 1.5rem;
+
+  /* ------------------------------
+   * Variables Específicas de Componentes
+   * ------------------------------ */
+  --footer-height: 70px;
+  --header-height: 70px;
+  --footer-indicator-border: 6px;
+  --background-image-light: url('../img/background_domex_light.webp');
+  --background-image-dark: url('../img/background_domex_dark.webp');
+  --reserva-bg-gradient: linear-gradient(180deg, var(--color-surface-primary) 0%, var(--color-surface-primary) 100%);
+}
+
+body.dark-theme {
+  /* ------------------------------
+   * Paleta de Colores (Dark Theme)
+   * ------------------------------ */
+  /* Brand */
+  --color-brand-primary-light: #48566a;
+
+  /* Text */
+  --color-text-primary: #F1F5F9;
+  --color-text-secondary: #A6B7D2;
+  --color-text-tertiary: #BAC8E0;
+  --color-text-placeholder: #A6B7D2;
+  
+  /* Surface / Background */
+  --color-surface-primary: #111827;
+  --color-surface-secondary: #1f2937; /* Usado para sidebar, modals, etc. */
+  --color-surface-tertiary: #3D4859;
+  --color-surface-contrast: #1F2936;
+  --color-surface-overlay: rgba(0, 0, 0, 0.85);
+
+  /* Borders */
+  --color-border-primary: #3B475C;
+  --color-border-secondary: var(--color-border-primary);
+
+  /* Semantic */
+  --color-success: #198754;
+  --color-success-bg: #0e2d1a;
+  --color-warning-bg: #332701;
+  --color-danger-bg: #4a1116;
+  --color-info-bg: #05313a;
+
+  /* Sombras */
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.2);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -2px rgba(0, 0, 0, 0.2);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.4), 0 4px 6px -4px rgba(0, 0, 0, 0.3);
+
+  /* Componentes */
+  --reserva-bg-gradient: linear-gradient(180deg, rgba(31, 41, 55, 1) 0%, rgba(31, 41, 55, 0.5) 100%);
+
+  /* Botones */
+  --color-button-primary: #111827;
+  --color-button-secondary: #1f2937;
+  --color-button-tertiary: #3D4859;
+
+  --color-button-volver: #111827;
+
+
+
+}
+
+
+/* ==========================================================================
+   3. ESTILOS GLOBALES Y RESET
+   ========================================================================== */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: var(--font-family-sans);
+  list-style: none;
+  text-decoration: none;
+}
+
+html {
+  background-color: rgb(240, 240, 255);
+}
+
+body {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-image: var(--background-image-light);
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+  background-repeat: no-repeat;
+  transition: background-image var(--transition-duration) var(--transition-timing);
+}
+
+body.dark-theme {
+  background-image: var(--background-image-dark);
+}
+
+#root {
+  width: 100%;
+  height: 100%;
+  margin: 0 auto;
+  text-align: center;
+}
+
+/* ==========================================================================
+   4. TIPOGRAFÍA BASE
+   ========================================================================== */
+h1, h2, h3, h4, h5, h6 {
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-primary);
+}
+
+h1 { font-size: var(--font-size-xxl); }
+h2 { font-size: var(--font-size-xl); }
+h3 { font-size: var(--font-size-lg); }
+p {
+  color: var(--color-text-secondary);
+  line-height: 1.6;
+}
+
+
+
+/*Cabecera*/
+
+.titleHome {
+  position: fixed;
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+  align-items: center;
+  padding-block: 0.5rem;
+  padding: 0 1.6rem;
+  background-color: var(--color-surface-primary);
+  box-shadow: var(--shadow-md);
+  z-index: 10;
+}
+
+.titleHome img {
+  width: 50px;
+  height: 50px;
+  border-radius: var(--border-radius-lg);
+}
+
+.titleHome i {
+  font-size: 24px;
+}
+
+/**/
+
+.main-content {
+  padding-top: var(--header-height);
+  min-height: calc(100vh - var(--footer-height) - var(--spacing-xxl));
+  /* para que el contenido no quede detrás del menú */
+}
+
+
+.page-title {
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 1rem;
+}
+
+
+/* Footer */
+
+.footer {
+  text-align: center;
+  font-size: 12px;
+  color: var(--color-text-primary);
+  height: calc(var(--footer-height) + var(--spacing-xxl));
+}
+
+.footer a {
+  color: #0984e3;
+  text-decoration: none;
+  margin: 0 5px;
+}
+
+
+
+
+/* Estilos del modal */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5); /* Fondo semitransparente */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000; /* Asegura que el modal esté por encima de otros elementos */
+}
+
+  .modal-content {
+    background-color: var(--color-surface-primary);
+    border: solid 2px var(--color-border-primary);
+    padding: var(--spacing-lg);
+    border-radius: var(--border-radius-lg);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    width: 90%;
+    max-width: 500px;
+    animation: fadeIn 0.3s ease-out;
+    max-height: 90vh;    
+    overflow-y: auto;
+    margin-inline: auto;
+    margin-block: 5vh;
+    display: flex;
+    gap: var(--spacing-sm);
+    flex-direction: column;
+  }
+
+
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+    color: var(--color-text-secondary);
+}
+
+.form-group input {
+    width: 100%;
+    padding: 8px 6px;
+    border: 1px solid var(--color-border-secondary);
+    background-color: var(--color-surface-secondary);
+    color: var(--color-text-secondary);
+    border-radius: var(--border-radius-md);
+    font-size: 16px;
+    box-sizing: border-box;
+    /* Para incluir padding en el ancho */
+}
+
+.form-group input:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(108, 99, 255, 0.2);
+}
+
+.boton-volver-container{
+  padding: var(--spacing-md);
+}

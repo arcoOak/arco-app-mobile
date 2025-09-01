@@ -1,0 +1,14 @@
+const TIPOS_TRANSACCION = {
+    MENSUALIDAD: 1,
+    RESERVACION: 2,
+    COMPRA_COMERCIO: 3,
+    SERVICIO: 4,
+    RECARGA: 5,
+};
+
+
+
+
+export {
+    TIPOS_TRANSACCION
+};

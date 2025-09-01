@@ -1,0 +1,125 @@
+/* Variables para facilitar la personalización */
+
+
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: var(--modal-overlay-bg);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.invitacion-qr__title {
+    margin: 0;
+    font-size: 1.5rem;
+    color: var(--color-text-primary);
+    text-align: center;
+}
+
+.invitacion-qr__button-group {
+    display: flex;
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius-md);
+    overflow: hidden;
+}
+
+.invitacion-qr__button-group button {
+    flex: 1;
+    padding: var(--spacing-sm) var(--spacing-md);
+    border: 1px solid var(--color-border-primary);
+    cursor: pointer;
+    font-size: 1rem;
+    transition: background-color 0.2s ease;
+}
+
+.invitacion-qr__button-group button:not(:last-child) {
+    border-right: 1px solid var(--color-border-primary);
+}
+
+.invitacion-qr__button-group button.active {
+    background-color: var(--color-active);
+    color: var(--color-white);
+}
+
+.invitacion-qr__form-group {
+    padding: var(--spacing-md);
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-md);
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius-md);
+}
+
+.invitacion-qr__form-group h3 {
+    margin: 0 0 0.5rem 0;
+    font-size: 1.2rem;
+}
+
+.invitacion-qr__beneficiarios-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    max-height: 200px;
+    overflow-y: auto;
+}
+
+.invitacion-qr__beneficiario-btn {
+    background-color: var(--color-surface-secondary);
+    color: var(--color-text-secondary);
+    width: 100%;
+    padding: var(--spacing-sm);
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius-md);
+    text-align: left;
+    cursor: pointer;
+    transition: border-color 0.2s ease, background-color 0.2s ease;
+}
+
+.invitacion-qr__beneficiario-btn.selected {
+    border-color: var(--selected-border-color);
+    background-color: var(--color-surface-primary);
+    font-weight: bold;
+    color: var(--color-text-primary);
+}
+
+.invitacion-qr__label {
+    font-weight: 500;
+    color: var(--color-text-secondary);
+}
+
+.invitacion-qr__input {
+    padding: var(--spacing-sm);
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius-md);
+    font-size: 1rem;
+    background-color: var(--color-surface-tertiary);
+    color: var(--color-text-tertiary);
+}
+
+.invitacion-qr__actions {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+.button-form-mode{
+    background-color: var(--color-surface-primary);
+    color: var(--color-text-primary);
+    padding: var(--spacing-sm) var(--spacing-md);
+    border: 1px solid var(--color-border-primary);
+    border-radius: var(--border-radius-md);
+    box-shadow: var(--shadow-sm);
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.button-form-mode.active {
+    background-color: var(--secondary-green);
+    color: white;
+}
