@@ -3,16 +3,16 @@ import React, { useState, useEffect, useMemo  } from 'react'; // Importa useStat
 import { useParams, useNavigate } from 'react-router-dom';
 import './PagosPendientes.css';
 
-import LoadingModal from '../../components/modals/LoadingModal';
-import ExitosoModal from '../../components/modals/ExitosoModal';
+import LoadingModal from '../../../components/modals/LoadingModal.jsx';
+import ExitosoModal from '../../../components/modals/ExitosoModal.jsx';
 
 import transaccionesService from '../../services/transacciones.service'; // Importa el servicio de transacciones
 import billeteraService from '../../services/billetera.service.js';
 
 import { useAuth } from '../../context/AuthContext'; // Importa el contexto de autenticación
 
-import Button from '../../components/buttons/Button';
-import ButtonVolver from '../../components/buttons/ButtonVolver';
+import Button from '../../../components/buttons/Button.js';
+import ButtonVolver from '../../../components/buttons/ButtonVolver.jsx';
 
 import {TIPOS_TRANSACCION} from '../../constants/transaccion.constants.js'; 
 

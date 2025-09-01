@@ -5,7 +5,7 @@ import {useAuth } from '../../context/AuthContext'; // Importa el contexto de au
 
 import familiaresService from '../../services/familiares.service'; // Importa el servicio de familiares
 
-import Button from '../../components/buttons/Button'; // Asegúrate de que la ruta sea correcta
+import Button from '../../../components/buttons/Button'; // Asegúrate de que la ruta sea correcta
 
 const FORM_MODES = {
     BENEFICIARIOS: 'beneficiarios',

@@ -1,18 +1,18 @@
 // src/components/EditProfileScreen.jsx
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import ProfileForm from '../../components/ProfileForm';
+import ProfileForm from '../../../components/ProfileForm';
 import './EditarPerfil.css'; // Asegúrate de tener este CSS para los estilos
 import { useAuth } from "../../context/AuthContext"; // Importa el contexto de autenticación
 
-import LoadingModal from '../../components/modals/LoadingModal'; // Importa el modal de carga
-import ExitosoModal from '../../components/modals/ExitosoModal';
+import LoadingModal from '../../../components/modals/LoadingModal'; // Importa el modal de carga
+import ExitosoModal from '../../../components/modals/ExitosoModal';
 
-import Button from '../../components/buttons/Button'; // Importa el botón personalizado
+import Button from '../../../components/buttons/Button'; // Importa el botón personalizado
 
 import userImagePlaceholder from '../../assets/user_placeholder.svg';
 
-import ButtonVolver from '../../components/buttons/ButtonVolver'; // Importa el botón de volver
+import ButtonVolver from '../../../components/buttons/ButtonVolver'; // Importa el botón de volver
 
 const EditarPerfil = () => {
 

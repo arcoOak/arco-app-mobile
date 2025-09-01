@@ -4,8 +4,8 @@ import { useState, useEffect } from 'react';
 import './EspaciosDetalle.css'; // Crea un archivo CSS para este componente
 import '../../css/Concecionario.css';
 
-import LoadingModal from '../../components/modals/LoadingModal';
-import ExitosoModal from '../../components/modals/ExitosoModal';
+import LoadingModal from '../../../components/modals/LoadingModal.jsx';
+import ExitosoModal from '../../../components/modals/ExitosoModal.jsx';
 import EspacioReservaModal from './EspacioReservaModal'; // Asegúrate de que la ruta sea correcta
 
 import espacioService from '../../services/espacio.service';
@@ -13,9 +13,9 @@ import reservasService from '../../services/reservas.service';
 
 import {useAuth } from '../../context/AuthContext'; // Importa el contexto de autenticación
 
-import ButtonVolver from '../../components/buttons/ButtonVolver'; // Importa el botón de volver
+import ButtonVolver from '../../../components/buttons/ButtonVolver.jsx'; // Importa el botón de volver
 
-import Button from '../../components/buttons/Button'; // Importa el botón de reservar
+import Button from '../../../components/buttons/Button.js'; // Importa el botón de reservar
 
 import {TIPOS_TRANSACCION} from '../../constants/transaccion.constants.js'; 
 

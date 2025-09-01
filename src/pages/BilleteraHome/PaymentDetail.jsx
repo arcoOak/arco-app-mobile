@@ -3,19 +3,19 @@ import React, { useState, useEffect, useMemo, useRef, useContext  } from 'react'
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import './PaymentDetail.css';
 
-import LoadingModal from '../../components/modals/LoadingModal';
+import LoadingModal from '../../../components/modals/LoadingModal.jsx';
 
 import transaccionesService from '../../services/transacciones.service.js'; // Importa el servicio de billetera
 
 import { useAuth } from '../../context/AuthContext'; // Importa el contexto de autenticación
 
-import MesSelector from '../../components/MesSelector'; // Importa el componente MesSelector
+import MesSelector from '../../../components/MesSelector.jsx'; // Importa el componente MesSelector
 
-import ButtonVolver from '../../components/buttons/ButtonVolver'; // Importa el componente ButtonVolver
+import ButtonVolver from '../../../components/buttons/ButtonVolver.jsx'; // Importa el componente ButtonVolver
 
-import Button from '../../components/buttons/Button';
+import Button from '../../../components/buttons/Button.js';
 
-import ExitosoModal from '../../components/modals/ExitosoModal';
+import ExitosoModal from '../../../components/modals/ExitosoModal.jsx';
 
 import {TIPOS_TRANSACCION} from '../../constants/transaccion.constants.js'; 
 

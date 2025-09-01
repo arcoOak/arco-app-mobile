@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 
 import './Servicios.css'; // Importa el CSS específico para este componente
 
-import LoadingModal from '../../components/modals/LoadingModal';
+import LoadingModal from '../../../components/modals/LoadingModal';
 
 import { useDragToScroll } from '../../hooks/useDragToScroll'; // Importa el hook personalizado para arrastrar y desplazar
 
@@ -14,7 +14,7 @@ import servicioImagePlaceholder from '../../assets/comercio_placeholder.webp';
 
 import { useAuth } from '../../context/AuthContext'; // Importa el contexto de autenticación
 
-import BuscadorTexto from '../../components/BuscadorTexto';
+import BuscadorTexto from '../../../components/BuscadorTexto';
 
 // Si usas este componente Servicios, la lista 'allBusinesses' DEBE ser pasada como una prop
 export default function Servicios() {

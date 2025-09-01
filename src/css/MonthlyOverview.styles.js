@@ -1,0 +1,198 @@
+// Adaptación de MonthlyOverview.css a React Native StyleSheet
+import { StyleSheet } from 'react-native';
+import { light, dark } from './VariablesBase.styles';
+
+// Puedes cambiar light por dark para modo oscuro
+const VARS = light;
+
+const styles = StyleSheet.create({
+  monthlyOverviewContainer: {
+    backgroundColor: VARS.colorWhite,
+    overflow: 'hidden',
+    maxWidth: 400,
+    maxHeight: 440,
+    marginHorizontal: 'auto',
+    paddingTop: 0,
+    paddingHorizontal: VARS.spacingLg,
+    paddingBottom: VARS.spacingLg,
+    fontFamily: 'Arial',
+    display: 'flex',
+    flexDirection: 'column',
+    borderRadius: VARS.borderRadiusPill,
+    shadowColor: '#636363',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 8,
+    elevation: 4,
+  },
+  overviewHeader: {
+    paddingTop: VARS.spacingSm,
+    paddingHorizontal: VARS.spacingLg,
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  overviewHeaderIcon: {
+    fontSize: VARS.fontSizeLg,
+  },
+  overviewHeaderTitle: {
+    fontSize: VARS.fontSizeBase,
+    fontWeight: VARS.fontWeightMedium,
+    margin: 0,
+    color: VARS.colorTextContrast,
+  },
+  overviewHeaderTotalPending: {
+    fontSize: VARS.fontSizeXxl,
+    fontWeight: VARS.fontWeightBold,
+    margin: 0,
+  },
+  currentMonthCard: {
+    backgroundColor: VARS.colorWhite,
+    marginTop: -25,
+    marginHorizontal: VARS.spacingLg,
+    marginBottom: VARS.spacingXs,
+    padding: VARS.spacingLg,
+    borderRadius: VARS.borderRadiusLg,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.1,
+    shadowRadius: 15,
+    elevation: 4,
+    textAlign: 'center',
+    position: 'relative',
+    zIndex: 1,
+  },
+  currentMonthCardLabel: {
+    fontSize: VARS.fontSizeBase,
+    color: VARS.colorTextSecondary,
+    marginBottom: VARS.spacingXs,
+    marginTop: 0,
+  },
+  currentMonthCardAmount: {
+    fontSize: VARS.fontSizeXxl,
+    fontWeight: VARS.fontWeightBold,
+    color: VARS.colorTextPrimary,
+    margin: 0,
+  },
+  tabsNavigation: {
+    flexDirection: 'row',
+    marginBottom: VARS.spacingSm,
+    position: 'relative',
+    justifyContent: 'space-between',
+    zIndex: 0,
+  },
+  tabButton: {
+    backgroundColor: 'transparent',
+    borderWidth: 0,
+    fontSize: VARS.fontSizeBase,
+    fontWeight: VARS.fontWeightRegular,
+    paddingVertical: VARS.spacingSm,
+    paddingHorizontal: VARS.spacingSm,
+    color: VARS.colorTextPrimary,
+    position: 'relative',
+  },
+  tabButtonActive: {
+    color: VARS.colorTextPrimary,
+    borderBottomWidth: 3,
+    borderBottomColor: VARS.colorBrandSecondary,
+    width: '60%',
+    alignSelf: 'center',
+    borderRadius: VARS.borderRadiusSm,
+  },
+  historyListSection: {
+    paddingHorizontal: VARS.spacingLg,
+    marginBottom: VARS.spacingLg,
+  },
+  statisticsPlaceholder: {
+    textAlign: 'center',
+    color: VARS.colorTextSecondary,
+  },
+  historyItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: VARS.spacingSm,
+    borderBottomWidth: 1,
+    borderBottomColor: '#939393',
+  },
+  historyItemStatus: {
+    fontWeight: VARS.fontWeightMedium,
+    fontSize: VARS.fontSizeXs,
+  },
+  historyItemIconWrapper: {
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 5,
+    elevation: 2,
+    borderRadius: VARS.borderRadiusLg,
+    padding: VARS.spacingSm,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: VARS.spacingMd,
+    color: VARS.colorTextPrimary,
+  },
+  historyItemIcon: {
+    color: VARS.colorBrandSecondary,
+    width: 24,
+    height: 24,
+  },
+  historyItemDetails: {
+    flexGrow: 1,
+    textAlign: 'left',
+  },
+  historyItemInfo: {
+    textAlign: 'right',
+  },
+  historyItemInfoLabel: {
+    fontSize: 12,
+    color: VARS.colorTextPrimary,
+  },
+  historyItemCategory: {
+    fontWeight: VARS.fontWeightRegular,
+    color: VARS.colorTextPrimary,
+    fontSize: VARS.fontSizeXs,
+    margin: 0,
+  },
+  transacctionItemCategory: {
+    fontWeight: VARS.fontWeightSemibold,
+    color: VARS.colorTextPrimary,
+    fontSize: VARS.fontSizeXs,
+    margin: 0,
+  },
+  historyItemTime: {
+    fontSize: VARS.fontSizeXs,
+    color: VARS.colorTextSecondary,
+    margin: 0,
+  },
+  historyItemAmount: {
+    color: VARS.colorTextPrimary,
+    fontSize: VARS.fontSizeMd,
+    margin: 0,
+    fontWeight: VARS.fontWeightSemibold,
+  },
+  viewDetailsButton: {
+    backgroundColor: VARS.colorBrandSecondary,
+    color: VARS.colorTextContrast,
+    borderWidth: 0,
+    borderRadius: VARS.borderRadiusLg,
+    paddingVertical: VARS.spacingLg,
+    paddingHorizontal: VARS.spacingXl,
+    fontSize: VARS.fontSizeBase,
+    fontWeight: VARS.fontWeightBold,
+    width: '90%',
+    alignSelf: 'center',
+    marginHorizontal: VARS.spacingLg,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.05,
+    shadowRadius: 5,
+    elevation: 2,
+  },
+  historyItemClickable: {
+    // No hover en RN, pero puedes usar TouchableOpacity
+    borderBottomWidth: 1,
+    borderBottomColor: VARS.colorBorderPrimary,
+  },
+});
+
+export default styles;

@@ -8,9 +8,9 @@ import comercioService from '../../services/comercio.service'; // Importa el ser
 import productoService from '../../services/producto.service';
 import serviciosService from '../../services/servicios.service';
 
-import LoadingModal from '../../components/modals/LoadingModal';
-import ExitosoModal from '../../components/modals/ExitosoModal';
-import Button from '../../components/buttons/Button'; // Importa el botón de volver
+import LoadingModal from '../../../components/modals/LoadingModal';
+import ExitosoModal from '../../../components/modals/ExitosoModal';
+import Button from '../../../components/buttons/Button'; // Importa el botón de volver
 
 import comercioImagePlaceholder from '../../assets/comercio_placeholder.webp';
 import productoImagePlaceholder from '../../assets/producto_placeholder.webp';
@@ -21,7 +21,7 @@ import { useDragToScroll } from '../../hooks/useDragToScroll';
 
 import { useCarrito } from '../../context/CartContext';
 
-import ButtonVolver from '../../components/buttons/ButtonVolver'; // Importa el botón de volver
+import ButtonVolver from '../../../components/buttons/ButtonVolver'; // Importa el botón de volver
 
 const ProductoCard = ({ producto, handleAddToCarrito, productoEnCarrito }) => (
     <div className="producto-card" key={producto.id_producto}

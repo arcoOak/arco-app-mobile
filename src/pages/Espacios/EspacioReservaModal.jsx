@@ -3,8 +3,8 @@ import './EspacioReservaModal.css';
 
 import {useAuth } from '../../context/AuthContext'; // Importa el contexto de autenticación
 
-import ModalFormulario from '../../components/modals/ModalFormulario';
-import Button from '../../components/buttons/Button'; // Importa el botón de confirmar
+import ModalFormulario from '../../../components/modals/ModalFormulario';
+import Button from '../../../components/buttons/Button'; // Importa el botón de confirmar
 
 import familiaresService from '../../services/familiares.service'; // Importa el servicio de familiares
 

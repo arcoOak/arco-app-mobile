@@ -3,8 +3,8 @@ import React, { useState, useEffect, useMemo  } from 'react'; // Importa useStat
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import './TransaccionIndividual.css';
 
-import LoadingModal from '../../components/modals/LoadingModal'; // Importa el componente de modal de carga
-import ExitosoModal from '../../components/modals/ExitosoModal';
+import LoadingModal from '../../../components/modals/LoadingModal.jsx'; // Importa el componente de modal de carga
+import ExitosoModal from '../../../components/modals/ExitosoModal.jsx';
 
 import transaccionesService from '../../services/transacciones.service'; // Importa el servicio de billetera
 
@@ -12,8 +12,8 @@ import billeteraService from '../../services/billetera.service.js';
 
 import { useAuth } from '../../context/AuthContext'; // Importa el contexto de autenticación
 
-import BotonVolver from '../../components/buttons/ButtonVolver';
-import Button from '../../components/buttons/Button';
+import BotonVolver from '../../../components/buttons/ButtonVolver.jsx';
+import Button from '../../../components/buttons/Button.js';
 
 import {TIPOS_TRANSACCION } from '../../constants/transaccion.constants';
 

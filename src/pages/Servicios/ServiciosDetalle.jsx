@@ -5,8 +5,8 @@ import './ServiciosDetalle.css'; // Crea un archivo CSS para este componente
 
 
 
-import LoadingModal from '../../components/modals/LoadingModal';
-import ExitosoModal from '../../components/modals/ExitosoModal';
+import LoadingModal from '../../../components/modals/LoadingModal.jsx';
+import ExitosoModal from '../../../components/modals/ExitosoModal.jsx';
 import ServicioReservaModal from './ServicioReservaModal'; // Asegúrate de que la ruta sea correcta
 
 import serviciosService from '../../services/servicios.service';
@@ -15,7 +15,7 @@ import reservaServicioService from '../../services/reservasServicio.service';
 
 import {useAuth } from '../../context/AuthContext'; // Importa el contexto de autenticación
 
-import ButtonVolver from '../../components/buttons/ButtonVolver'; // Importa el botón de volver
+import ButtonVolver from '../../../components/buttons/ButtonVolver.jsx'; // Importa el botón de volver
 
 import {TIPOS_TRANSACCION} from '../../constants/transaccion.constants.js'; 
 

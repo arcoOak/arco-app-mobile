@@ -2,7 +2,7 @@ import React, { useState, useEffect, useMemo, useContext, useRef } from 'react';
 
 import noticiasService from '../../services/noticias.service';
 
-import LoadingModal from '../../components/modals/LoadingModal';
+import LoadingModal from '../../../components/modals/LoadingModal';
 
 import { useNavigate } from 'react-router-dom';
 
@@ -16,7 +16,7 @@ import placeholder_3 from '../../img/news/placeholder_3.jpg';
 import placeholder_4 from '../../img/news/placeholder_4.jpg';
 
 import './Noticias.css';
-import MesSelector from '../../components/MesSelector';
+import MesSelector from '../../../components/MesSelector';
 
 const Noticias = ()=> {
     const [noticias, setNoticias] = useState([]);

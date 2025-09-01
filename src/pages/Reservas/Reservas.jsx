@@ -4,11 +4,11 @@ import './Reservas.css'; // Asegúrate de importar tu CSS principal
 
 import { useAuth } from '../../context/AuthContext'; // Importa el contexto de autenticación}
 
-import LoadingModal from '../../components/modals/LoadingModal';
+import LoadingModal from '../../../components/modals/LoadingModal';
 
 import reservasService from '../../services/reservas.service';
 
-import MesSelector from '../../components/MesSelector'; // Importa el componente MesSelector
+import MesSelector from '../../../components/MesSelector'; // Importa el componente MesSelector
 
 export default function Reservas() {
     const navigate = useNavigate();

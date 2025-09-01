@@ -4,10 +4,10 @@ import './ReservasDetalle.css';
 
 import { useAuth } from '../../context/AuthContext';
 
-import LoadingModal from '../../components/modals/LoadingModal';
+import LoadingModal from '../../../components/modals/LoadingModal';
 import reservasService from '../../services/reservas.service';
 
-import ButtonVolver from '../../components/buttons/ButtonVolver';
+import ButtonVolver from '../../../components/buttons/ButtonVolver';
 
 
 

@@ -4,8 +4,8 @@ import { useNavigate } from 'react-router-dom';
 
 import './Comercio.css'; // Importa el CSS específico para este componente
 
-import LoadingModal from '../../components/modals/LoadingModal';
-import CategoriaSelector from '../../components/CategoriaSelector'; // Importa el componente de carrusel de categorías
+import LoadingModal from '../../../components/modals/LoadingModal';
+import CategoriaSelector from '../../../components/CategoriaSelector'; // Importa el componente de carrusel de categorías
 
 import { useDragToScroll } from '../../hooks/useDragToScroll'; // Importa el hook personalizado para arrastrar y desplazar
 
@@ -15,7 +15,7 @@ import comercioImagePlaceholder from '../../assets/comercio_placeholder.webp';
 
 import { useAuth } from '../../context/AuthContext'; // Importa el contexto de autenticación
 
-import BuscadorTexto from '../../components/BuscadorTexto';
+import BuscadorTexto from '../../../components/BuscadorTexto';
 
 // Si usas este componente Comercio, la lista 'allBusinesses' DEBE ser pasada como una prop
 export default function Comercio() {

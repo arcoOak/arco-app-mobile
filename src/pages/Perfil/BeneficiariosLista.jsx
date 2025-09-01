@@ -17,12 +17,12 @@ import { useNavigate } from 'react-router-dom';
 import QRCode from 'react-qr-code'; // Importa el componente QRCode
 import './BeneficiariosLista.css';
 
-import LoadingModal from '../../components/modals/LoadingModal'; 
-import ExitosoModal from '../../components/modals/ExitosoModal';
-import ModalFormulario from '../../components/modals/ModalFormulario'; 
-import ConfirmarModal from '../../components/modals/ConfirmarModal';
+import LoadingModal from '../../../components/modals/LoadingModal'; 
+import ExitosoModal from '../../../components/modals/ExitosoModal';
+import ModalFormulario from '../../../components/modals/ModalFormulario'; 
+import ConfirmarModal from '../../../components/modals/ConfirmarModal';
 
-import Button from '../../components/buttons/Button'; // Importa el botón personalizado
+import Button from '../../../components/buttons/Button'; // Importa el botón personalizado
 
 import FormatearFecha from '../../utils/FormatearFecha';
 import { Edit } from 'lucide-react';
@@ -33,7 +33,7 @@ import familiaresService from '../../services/familiares.service';
 
 import { useAuth } from "../../context/AuthContext"; // Importa el contexto de autenticación
 
-import ButtonVolver from '../../components/buttons/ButtonVolver'; // Importa el botón de volver
+import ButtonVolver from '../../../components/buttons/ButtonVolver'; // Importa el botón de volver
 
 
 export default function BeneficiariosLista() {

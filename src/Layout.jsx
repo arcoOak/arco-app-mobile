@@ -2,12 +2,12 @@ import { Outlet, Link, useLocation, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 
 import { useCarrito } from "./context/CartContext";
-import VistaCarrito from "./components/cart/VistaCarrito";
-import ModalCarrito from "./components/cart/ModalCarrito";
+import VistaCarrito from "../components/cart/VistaCarrito";
+import ModalCarrito from "../components/cart/ModalCarrito";
 
 import {useNotificaciones} from './context/NotificacionesContext';
-import VistaNotificaciones from "./components/notificaciones/VistaNotificaciones";
-import ModalNotificaciones from "./components/notificaciones/ModalNotificaciones";
+import VistaNotificaciones from "../components/notificaciones/VistaNotificaciones";
+import ModalNotificaciones from "../components/notificaciones/ModalNotificaciones";
 
 import './css/Wrapper.css'; // Importa tu CSS para el layout
 

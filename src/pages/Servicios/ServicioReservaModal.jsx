@@ -3,7 +3,7 @@ import './ServicioReservaModal.css';
 
 import {useAuth } from '../../context/AuthContext'; // Importa el contexto de autenticación
 
-import Button from '../../components/buttons/Button'; // Importa el botón de confirmar
+import Button from '../../../components/buttons/Button'; // Importa el botón de confirmar
 
 export default function ConfirmacionReservaModal({
     visible,

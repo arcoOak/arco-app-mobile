@@ -4,7 +4,7 @@ import './NoticiasDetalle.css';
 
 import { useAuth } from '../../context/AuthContext';
 
-import LoadingModal from '../../components/modals/LoadingModal';
+import LoadingModal from '../../../components/modals/LoadingModal';
 
 import noticiasService from '../../services/noticias.service';
 
@@ -13,7 +13,7 @@ import placeholder_2 from '../../img/news/placeholder_2.jpg';
 import placeholder_3 from '../../img/news/placeholder_3.jpg';
 import placeholder_4 from '../../img/news/placeholder_4.jpg';
 
-import ButtonVolver from '../../components/buttons/ButtonVolver';
+import ButtonVolver from '../../../components/buttons/ButtonVolver';
 
 const NoticiasDetalle = () => {
     const navigate = useNavigate();

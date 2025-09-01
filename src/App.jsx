@@ -25,10 +25,10 @@ import TermsOfUse from "./pages/TermsOfUse";
 import Reservas from "./pages/Reservas/Reservas";
 import ReservasDetalle from "./pages/Reservas/ReservasDetalle";
 import Login from "./Login";
-import Preloader from "./components/Preloader";
+import Preloader from "../components/Preloader";
 
 // Importa las vistas de modales y el nuevo Tab Navigator
-import VistaCarrito from "./components/cart/VistaCarrito";
+import VistaCarrito from "../components/cart/VistaCarrito";
 import MainTabNavigator from "./navigation/MainTabNavigator";
 
 // Import Contexts
@@ -143,7 +143,7 @@ function App() {
 
 
 StyleSheet.create({
-    
+
 });
 
 export default App;

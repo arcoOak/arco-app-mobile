@@ -8,9 +8,9 @@ import InvitacionesQRService from '../../services/invitaciones_correo.service'; 
 import { useAuth } from '../../context/AuthContext'; // Importa el contexto de autenticación
 import InvitacionQR from './InvitacionQr';
 
-import ExitosoModal from '../../components/modals/ExitosoModal'; // Importa el modal de éxito
+import ExitosoModal from '../../../components/modals/ExitosoModal'; // Importa el modal de éxito
 
-import Button from '../../components/buttons/Button'; // Asegúrate de tener un componente Button reutilizable
+import Button from '../../../components/buttons/Button'; // Asegúrate de tener un componente Button reutilizable
 
 
 function LecturaQr() {
