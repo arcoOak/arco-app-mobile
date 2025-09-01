@@ -1,5 +1,7 @@
+
 import React, { useState } from 'react';
-import '../css/Faqs.css';
+import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import FaqsStyles from '../css/Faqs.styles';
 
 const faqs = [
   {
@@ -18,28 +20,33 @@ const faqs = [
 
 const FAQItem = ({ question, answer }) => {
   const [isOpen, setIsOpen] = useState(false);
-
   return (
-    <div className="faq-item">
-      <button className="faq-question" onClick={() => setIsOpen(!isOpen)}>
-        {question}
-        <span className="faq-toggle">{isOpen ? '–' : '+'}</span>
-      </button>
-      {isOpen && <div className="faq-answer">{answer}</div>}
-    </div>
+    <View style={FaqsStyles.faqItem}>
+      <TouchableOpacity
+        style={FaqsStyles.faqQuestion}
+        onPress={() => setIsOpen(!isOpen)}
+        activeOpacity={0.85}
+      >
+        <Text style={{ flex: 1 }}>{question}</Text>
+        <Text style={FaqsStyles.faqToggle}>{isOpen ? '–' : '+'}</Text>
+      </TouchableOpacity>
+      {isOpen && (
+        <Text style={FaqsStyles.faqAnswer}>{answer}</Text>
+      )}
+    </View>
   );
 };
 
 const FAQPage = () => {
   return (
-    <div className="faq-container">
-      <div className="faq-content">
-        <h1 className="faq-title">Preguntas Frecuentes</h1>
+    <View style={FaqsStyles.faqContainer}>
+      <View style={FaqsStyles.faqContent}>
+        <Text style={FaqsStyles.faqTitle}>Preguntas Frecuentes</Text>
         {faqs.map((faq, index) => (
           <FAQItem key={index} question={faq.question} answer={faq.answer} />
         ))}
-      </div>
-    </div>
+      </View>
+    </View>
   );
 };
 

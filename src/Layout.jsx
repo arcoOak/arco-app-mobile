@@ -1,86 +1,122 @@
-import { Outlet, Link, useLocation, useNavigate } from "react-router-dom";
-import { useState, useEffect } from "react";
 
-import { useCarrito } from "./context/CartContext";
-import VistaCarrito from "../components/cart/VistaCarrito";
-import ModalCarrito from "../components/cart/ModalCarrito";
+import React, { useState, useEffect } from 'react';
+import { View, Text, TouchableOpacity, ScrollView, StyleSheet, Linking } from 'react-native';
+import Icon from 'react-native-vector-icons/FontAwesome6';
+import { useNavigation, useRoute } from '@react-navigation/native';
+import { useCarrito } from './context/CartContext';
+import VistaCarrito from '../components/cart/VistaCarrito';
+import ModalCarrito from '../components/cart/ModalCarrito';
+import { useNotificaciones } from './context/NotificacionesContext';
+import VistaNotificaciones from '../components/notificaciones/VistaNotificaciones';
+import ModalNotificaciones from '../components/notificaciones/ModalNotificaciones';
+import Navbar from './pages/Navbar';
+import WrapperStyles from './css/Wrapper.styles';
 
-import {useNotificaciones} from './context/NotificacionesContext';
-import VistaNotificaciones from "../components/notificaciones/VistaNotificaciones";
-import ModalNotificaciones from "../components/notificaciones/ModalNotificaciones";
-
-import './css/Wrapper.css'; // Importa tu CSS para el layout
-
-import Navbar from "./pages/Navbar";
 
 export default function Layout() {
-
-    const location = useLocation();
+    const navigation = useNavigation();
+    const route = useRoute();
     const [activeIndex, setActiveIndex] = useState(0);
-
-    const { elementosCarrito, totalItems } = useCarrito(); // Obtiene los elementos del carrito desde el contexto
-    const [carritoVisible, setCarritoVisible] = useState(false); // Estado para controlar la visibilidad del carrito
-
-    const { notificaciones, noVistasCount, marcarComoVista } = useNotificaciones();
+    const { elementosCarrito, totalItems } = useCarrito();
+    const [carritoVisible, setCarritoVisible] = useState(false);
+    const { notificaciones, noVistasCount } = useNotificaciones();
     const [notificacionesVisible, setNotificacionesVisible] = useState(false);
 
     const menuItems = [
-        { icon: "bx bxs-home-alt-2", label: "Inicio", path: "/" },
-        { icon: "bx bxs-calendar-alt", label: "Espacios", path: "/espacios" },
-        { icon: "bx bxs-qr-scan", label: "QR", path: "/qr" },
-        { icon: "bx bxs-store", label: "Comercios", path: "/comercios" },
-        { icon: "bx bxs-user", label: "Perfil", path: "/perfil" },
+        { icon: 'house', label: 'Inicio', path: 'Home' },
+        { icon: 'calendar', label: 'Espacios', path: 'Espacios' },
+        { icon: 'qrcode', label: 'QR', path: 'QR' },
+        { icon: 'store', label: 'Comercios', path: 'Comercios' },
+        { icon: 'user', label: 'Perfil', path: 'Perfil' },
     ];
 
-    // Cambia activeIndex cuando cambia la URL
     useEffect(() => {
-        const index = menuItems.findIndex(item => item.path === location.pathname);
+        const index = menuItems.findIndex(item => route.name === item.path);
         if (index !== -1) setActiveIndex(index);
-    }, [location.pathname]);
+    }, [route.name]);
 
     return (
-        <div className="app-container">
-            <div className="floating-modals-container">
+        <View style={{ flex: 1, backgroundColor: '#f7f7f7' }}>
+            <View style={WrapperStyles.floatingModalsContainer}>
                 <ModalCarrito visible={totalItems > 0} cantidad={totalItems} onPress={() => setCarritoVisible(!carritoVisible)} />
                 <ModalNotificaciones cantidadNoVistas={noVistasCount} visible={notificaciones.length > 0} onPress={() => setNotificacionesVisible(!notificacionesVisible)} />
-            </div>
+            </View>
 
-            {carritoVisible && 
-                (<VistaCarrito onClose={() => setCarritoVisible(false)}></VistaCarrito>)
-            }
+            {carritoVisible && <VistaCarrito onClose={() => setCarritoVisible(false)} />}
+            {notificacionesVisible && <VistaNotificaciones onClose={() => setNotificacionesVisible(false)} />}
 
-            {notificacionesVisible && 
-                (<VistaNotificaciones onClose={() => setNotificacionesVisible(false)}></VistaNotificaciones>)
-            }
+            <Navbar />
 
-            <Navbar/>
+            <View style={{ flex: 1, paddingBottom: 80 }}>
+                {/* Aquí iría el contenido principal, por ejemplo, children o un Stack.Navigator */}
+            </View>
 
-            <div className="main-content">
-                <Outlet />
-            </div>
-
-            <div className="wrapper">
-                <ul>
+            <View style={WrapperStyles.wrapper}>
+                <View style={WrapperStyles.wrapperUl}>
                     {menuItems.map((item, index) => (
-                        <li
+                        <TouchableOpacity
                             key={index}
-                            className={activeIndex === index ? "active" : ""}
+                            style={WrapperStyles.wrapperLi}
+                            onPress={() => navigation.navigate(item.path)}
+                            activeOpacity={0.85}
                         >
-                            <Link to={item.path}>
-                                <i className={`${item.icon} ${item.size || 'bx-md'}`} />
-                                <span>{item.label}</span>
-                            </Link>
-                        </li>
+                            <View style={WrapperStyles.wrapperA}>
+                                <Icon
+                                    name={item.icon}
+                                    size={32}
+                                    color={activeIndex === index ? '#fff' : '#1976d2'}
+                                    style={[
+                                        WrapperStyles.wrapperIcon,
+                                        activeIndex === index && WrapperStyles.wrapperIconActive,
+                                    ]}
+                                />
+                                <Text
+                                    style={[
+                                        WrapperStyles.wrapperSpan,
+                                        activeIndex === index && WrapperStyles.wrapperSpanActive,
+                                    ]}
+                                >
+                                    {item.label}
+                                </Text>
+                            </View>
+                        </TouchableOpacity>
                     ))}
-                    <div className="indicator" />
-                </ul>
-            </div>
+                    <View style={WrapperStyles.indicator} />
+                </View>
+            </View>
 
-            <footer className={`footer`}>
-                    <p><a href="#" onClick={() => navigate('/PrivacyPolicy')}>Política de Privacidad</a> | <a href="#" onClick={() => navigate('/TermsOfUse')}>Términos de Uso</a> | <a href="#" onClick={() => navigate('/FAQPage')} >FAQs</a></p>
-                    <p>© 2025 Oak Tree C.A.</p>
-                    <p>Todos los derechos reservados.</p>
-                </footer>
-        </div>
+            <View style={styles.footer}>
+                <Text style={styles.footerText}>
+                    <Text style={styles.footerLink} onPress={() => navigation.navigate('PrivacyPolicy')}>Política de Privacidad</Text>
+                    {' | '}
+                    <Text style={styles.footerLink} onPress={() => navigation.navigate('TermsOfUse')}>Términos de Uso</Text>
+                    {' | '}
+                    <Text style={styles.footerLink} onPress={() => navigation.navigate('FAQPage')}>FAQs</Text>
+                </Text>
+                <Text style={styles.footerText}>© 2025 Oak Tree C.A.</Text>
+                <Text style={styles.footerText}>Todos los derechos reservados.</Text>
+            </View>
+        </View>
     );
 }
+
+const styles = StyleSheet.create({
+    footer: {
+        backgroundColor: '#f7f7f7',
+        alignItems: 'center',
+        justifyContent: 'center',
+        paddingVertical: 12,
+        borderTopWidth: 1,
+        borderTopColor: '#e0e0e0',
+    },
+    footerText: {
+        color: '#888',
+        fontSize: 13,
+        textAlign: 'center',
+        marginBottom: 2,
+    },
+    footerLink: {
+        color: '#1976d2',
+        textDecorationLine: 'underline',
+    },
+});

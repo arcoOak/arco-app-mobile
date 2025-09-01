@@ -12,53 +12,92 @@ const ProfileForm = ({ initialData, onSave, onCancel }) => {
         //console.log('Datos iniciales del formulario:', initialData);
     }, [initialData]);
 
-    const handleChange = (e) => {
-        const { name, value } = e.target;
+    const handleChange = (name, value) => {
         setFormData((prevData) => ({
             ...prevData,
             [name]: value,
         }));
     };
 
-    const handleSubmit = (e) => {
-        e.preventDefault();
+    const handleSubmit = () => {
         onSave(formData);
     };
 
     return (
-        <form className="profile-form" onSubmit={handleSubmit}>
-            <div className="form-group">
-                <label htmlFor="telefono">Teléfono</label>
-                <input
-                    type="tel"
-                    id="telefono"
-                    name="telefono"
+        <View style={styles.form}>
+            <View style={styles.formGroup}>
+                <Text style={styles.label}>Teléfono</Text>
+                <TextInput
+                    style={styles.input}
+                    keyboardType="phone-pad"
                     value={formData.telefono || ''}
-                    onChange={handleChange}
+                    onChangeText={value => handleChange('telefono', value)}
                     placeholder="Ej: +58 412 1234567"
                     required
                 />
-            </div>
-            <div className="form-group">
-                <label htmlFor="direccion">Dirección</label>
-                <input
-                    type="text"
-                    id="direccion"
-                    name="direccion"
+            </View>
+            <View style={styles.formGroup}>
+                <Text style={styles.label}>Dirección</Text>
+                <TextInput
+                    style={styles.input}
                     value={formData.direccion || ''}
-                    onChange={handleChange}
+                    onChangeText={value => handleChange('direccion', value)}
                     placeholder="Ej: Av. Principal, Urb. El Sol"
                     required
                 />
-            </div>
-
-            <div className="form-buttons">
-                <Button type="submit" className="primary">Guardar</Button>
-                <Button type="button" className="neutral" onClick={onCancel}>Cancelar</Button>
-                
-            </div>
-        </form>
+            </View>
+            <View style={styles.formButtons}>
+                <Button onPress={handleSubmit} style={styles.saveButton} className="primary">Guardar</Button>
+                <Button onPress={onCancel} style={styles.cancelButton} className="neutral">Cancelar</Button>
+            </View>
+        </View>
     );
 };
+
+
+import { StyleSheet, View, Text, TextInput } from 'react-native';
+
+const styles = StyleSheet.create({
+    form: {
+        padding: 20,
+        backgroundColor: '#fff',
+        borderRadius: 16,
+        elevation: 2,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.08,
+        shadowRadius: 4,
+    },
+    formGroup: {
+        marginBottom: 18,
+    },
+    label: {
+        fontSize: 16,
+        fontWeight: 'bold',
+        marginBottom: 6,
+        color: '#222',
+    },
+    input: {
+        borderWidth: 1,
+        borderColor: '#ccc',
+        borderRadius: 8,
+        padding: 10,
+        fontSize: 16,
+        backgroundColor: '#f9f9f9',
+    },
+    formButtons: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        marginTop: 16,
+    },
+    saveButton: {
+        flex: 1,
+        marginRight: 8,
+    },
+    cancelButton: {
+        flex: 1,
+        marginLeft: 8,
+    },
+});
 
 export default ProfileForm;

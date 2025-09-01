@@ -1,13 +1,13 @@
+
 import React, { useState, useEffect } from "react";
-import "../../css/DashboardHome.css";
-
+import { View, Text, TouchableOpacity, TextInput, StyleSheet } from 'react-native';
+import { Picker } from '@react-native-picker/picker';
+import Icon from 'react-native-vector-icons/FontAwesome6';
 import { useAuth } from "../../src/context/AuthContext";
-
 import billeteraService from "../../src/services/billetera.service";
-
 import data_dbService from "../../src/services/data_db.service";
-
 import ModalFormulario from "../modals/ModalFormulario";
+import dashboardHomeStyles from '../../src/css/DashboardHome.styles';
 
 export default function TarjetaRecargar() {
 
@@ -75,7 +75,7 @@ export default function TarjetaRecargar() {
     };
 
     return (
-        <React.Fragment>
+        <>
             <ModalFormulario
                 visible={isModalOpen}
                 onClose={handleModalClose}
@@ -83,44 +83,88 @@ export default function TarjetaRecargar() {
                 titulo="Recargar Saldo"
                 data={{ monto, metodoSeleccionado }}
             >
-                    <label className="box-form-container-label" htmlFor="monto">Monto:</label>
-                    <input className="box-form-container-input"
-                        type="number"
-                        id="monto"
-                        value={monto}
-                        onChange={(e) => setMonto(e.target.value)}
-                        required
-                        min="1"
-                    />
-                    <label className="box-form-container-label" htmlFor="metodo">Método de Pago:</label>
-                    <select
-                        id="metodo"
-                        value={metodoSeleccionado}
-                        onChange={(e) => setMetodoSeleccionado(e.target.value)}
-                        className="box-form-container-input"
-                        required
+                <Text style={styles.label}>Monto:</Text>
+                <TextInput
+                    style={styles.input}
+                    keyboardType="numeric"
+                    value={monto.toString()}
+                    onChangeText={setMonto}
+                    placeholder="Ingrese el monto"
+                    min={1}
+                />
+                <Text style={styles.label}>Método de Pago:</Text>
+                <View style={styles.pickerWrapper}>
+                    <Picker
+                        selectedValue={metodoSeleccionado}
+                        onValueChange={setMetodoSeleccionado}
+                        style={styles.input}
                     >
-                        <option value="" disabled>Seleccionar</option>
+                        <Picker.Item label="Seleccionar" value="" enabled={false} />
                         {metodosPago.map((metodo) => (
-                            <option key={metodo.id_metodo_pago} value={metodo.id_metodo_pago}>
-                                {metodo.nombre_metodo_pago}
-                            </option>
+                            <Picker.Item key={metodo.id_metodo_pago} label={metodo.nombre_metodo_pago} value={metodo.id_metodo_pago} />
                         ))}
-                    </select>
+                    </Picker>
+                </View>
             </ModalFormulario>
-            <div className="balance-section">
-                <div className="balance-actions">
-                    <div className="balance-button">
-                        
-                        <button onClick={() => setIsModalOpen(true)}>
-                            <i className="fa-solid fa-wallet"></i>
-                            <label>Recargar</label>
-                        </button>
-                        
-                    </div>
-                    
-                </div>
-            </div>
-        </React.Fragment>
+            <View style={dashboardHomeStyles.balanceSection}>
+                <View style={dashboardHomeStyles.balanceActions}>
+                    <View style={dashboardHomeStyles.balanceButton}>
+                        <TouchableOpacity
+                            style={styles.recargarButton}
+                            onPress={() => setIsModalOpen(true)}
+                            activeOpacity={0.85}
+                        >
+                            <Icon name="wallet" size={22} color="#1976d2" style={{ marginRight: 8 }} />
+                            <Text style={styles.recargarLabel}>Recargar</Text>
+                        </TouchableOpacity>
+                    </View>
+                </View>
+            </View>
+        </>
     );
+
+const styles = StyleSheet.create({
+  label: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    marginBottom: 6,
+    marginTop: 10,
+    color: '#222',
+  },
+  input: {
+    borderWidth: 1,
+    borderColor: '#ccc',
+    borderRadius: 8,
+    padding: 10,
+    marginBottom: 12,
+    fontSize: 16,
+    backgroundColor: '#fff',
+  },
+  pickerWrapper: {
+    borderWidth: 1,
+    borderColor: '#ccc',
+    borderRadius: 8,
+    marginBottom: 12,
+    backgroundColor: '#fff',
+    overflow: 'hidden',
+  },
+  recargarButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#e3f2fd',
+    borderRadius: 12,
+    paddingVertical: 10,
+    paddingHorizontal: 18,
+    elevation: 2,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.08,
+    shadowRadius: 4,
+  },
+  recargarLabel: {
+    fontSize: 16,
+    color: '#1976d2',
+    fontWeight: 'bold',
+  },
+});
 }
