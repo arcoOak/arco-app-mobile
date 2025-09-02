@@ -1,164 +1,142 @@
-import React, { useState, useEffect, useMemo, useContext, useRef } from 'react';
 
+import React, { useState, useEffect } from 'react';
+import { View, Text, ScrollView, TouchableOpacity, Image, FlatList } from 'react-native';
 import LoadingModal from '../../../components/modals/LoadingModal';
-
-import { useNavigate } from 'react-router-dom';
-
 import { useAuth } from '../../context/AuthContext';
-
-import { useDragToScroll } from '../../hooks/useDragToScroll';
-
-import placeholder_1 from '../../img/news/placeholder_1.jpg';
-import placeholder_2 from '../../img/news/placeholder_2.jpg';
-import placeholder_3 from '../../img/news/placeholder_3.jpg';
-import placeholder_4 from '../../img/news/placeholder_4.jpg';
-
-import './Notifications_user.css';
 import MesSelector from '../../../components/MesSelector';
+import styles from './Notifications_user.styles';
+// Si tienes imágenes locales, usa require. Si no, deja como string para remoto.
+const placeholder_1 = require('../../img/news/placeholder_1.jpg');
+const placeholder_2 = require('../../img/news/placeholder_2.jpg');
+const placeholder_3 = require('../../img/news/placeholder_3.jpg');
+const placeholder_4 = require('../../img/news/placeholder_4.jpg');
 
-const Notificaciones = ()=> {
+
+const Notificaciones = () => {
     const [notificaciones, setNotificaciones] = useState([]);
     const [categorias, setCategorias] = useState([]);
-
-    const navigate = useNavigate();
-
     const [notificacionesFiltradas, setNotificacionesFiltradas] = useState([]);
-
     const [loading, setLoading] = useState(true);
-
-    const {user} = useAuth();
-
-    const { scrollContainerRef, dragHandlers } = useDragToScroll();
-    const monthsRef = useRef({});
-
+    const { user } = useAuth();
     const [mesSeleccionado, setMesSeleccionado] = useState(new Date().getMonth() + 1);
-    const [anhoSeleccionado, setAnhoSeleccionado] = useState(new Date().getFullYear());
-
     const [categoriaSeleccionada, setCategoriaSeleccionada] = useState(null);
 
-    useEffect (() =>{
-
-        const fetchNotificaciones = async ()=>{
+    useEffect(() => {
+        // Simulación de fetch
+        const fetchNotificaciones = async () => {
             try {
-
-                
-
+                // Aquí deberías hacer fetch real
+                const notificacionesRespuesta = [];
+                const categoriasRespuesta = [];
                 setNotificaciones(notificacionesRespuesta);
                 setCategorias(categoriasRespuesta);
-
                 setNotificacionesFiltradas(notificacionesRespuesta);
             } catch (error) {
-                console.error("Error fetching notificaciones:", error);
+                console.error('Error fetching notificaciones:', error);
             } finally {
                 setTimeout(() => {
                     setLoading(false);
-                }, 1000); // Simulate a delay for loading state
+                }, 1000);
             }
-        }
-
+        };
         fetchNotificaciones();
-    }, [user])
+    }, [user]);
 
-        const handleMesSeleccionado = (mes) => {
-            setMesSeleccionado(mes);
-        
-            const fetchNotificacionesFecha = async () => {
-                
+    const handleMesSeleccionado = (mes) => {
+        setMesSeleccionado(mes);
+        // Aquí podrías filtrar por mes si lo deseas
+    };
 
-            }
-            fetchNotificacionesFecha();
+    const handleCategoriaSeleccionada = (categoria) => {
+        if (categoriaSeleccionada === categoria) {
+            setCategoriaSeleccionada(null);
+            setNotificacionesFiltradas(notificaciones);
+        } else {
+            setCategoriaSeleccionada(categoria);
+            setNotificacionesFiltradas(
+                notificaciones.filter(n => n.id_categoria === categoria)
+            );
         }
+    };
 
-        const handleCategoriaSeleccionada = async (categoria) => {
+    const getPlaceholderImage = (id_categoria) => {
+        if (id_categoria === 1) return placeholder_1;
+        if (id_categoria === 2) return placeholder_2;
+        if (id_categoria === 3) return placeholder_3;
+        if (id_categoria === 4) return placeholder_4;
+        return placeholder_1;
+    };
 
-            if (categoriaSeleccionada == categoria) {
-                console.log("Categoria ya seleccionada:", categoriaSeleccionada);
-                setCategoriaSeleccionada(null);
-                setNotificacionesFiltradas(notificaciones); // Reset to all notificaciones if the same category is clicked
-                return;
-            }
-            else{
-                console.log("Nueva categoria seleccionada:", categoria);
-                setCategoriaSeleccionada(categoria);
-                setNotificacionesFiltradas(
-                    () => notificacionesFiltradas.filter(notificaciones => notificaciones.id_categoria === categoria)
-                );
-            }
-            
-        }
-
-
-    let placeholderImage = '';
+    const handleItemPress = (id_notificaciones) => {
+        // Aquí deberías navegar a la pantalla de detalle
+        // Por ejemplo, usando React Navigation:
+        // navigation.navigate('NotificacionDetalle', { id: id_notificaciones });
+    };
 
     return (
-        <React.Fragment>
+        <View style={styles.container}>
             <LoadingModal visible={loading} />
-
-            <div className="notificaciones-container">
-            <h2 className='notificaciones-title' >Notificaciones</h2>
-
-            <MesSelector mesSeleccionado={mesSeleccionado} handleMesSeleccionado={(mes) => handleMesSeleccionado(mes)} />
-
-            <div className="notificaciones-categorias">
-                <h3 className="notificaciones-categorias-title">Categorías</h3>
-                <div className="notificaciones-categorias-list" ref={scrollContainerRef} {...dragHandlers}>
+            <Text style={styles.title}>Notificaciones</Text>
+            <MesSelector mesSeleccionado={mesSeleccionado} handleMesSeleccionado={handleMesSeleccionado} />
+            <View style={styles.categoriasContainer}>
+                <Text style={styles.categoriasTitle}>Categorías</Text>
+                <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.categoriasList}>
                     {categorias.map((categoria) => (
-                        <div 
-                            key={categoria.id_categoria} 
-                            className={`notificaciones-categoria-item ${categoriaSeleccionada === categoria.id_categoria ? 'active' : ''}`}
-                            onClick={ () => handleCategoriaSeleccionada(categoria.id_categoria) }
+                        <TouchableOpacity
+                            key={categoria.id_categoria}
+                            style={[
+                                styles.categoriaItem,
+                                categoriaSeleccionada === categoria.id_categoria && styles.categoriaItemActive,
+                            ]}
+                            onPress={() => handleCategoriaSeleccionada(categoria.id_categoria)}
                         >
-                            {categoria.nombre_categoria_notificaciones}
-                        </div>
+                            <Text
+                                style={[
+                                    styles.categoriaItemText,
+                                    categoriaSeleccionada === categoria.id_categoria && styles.categoriaItemTextActive,
+                                ]}
+                            >
+                                {categoria.nombre_categoria_notificaciones}
+                            </Text>
+                        </TouchableOpacity>
                     ))}
-                </div>
-            </div>
+                </ScrollView>
+            </View>
+            <View style={styles.list}>
+                {notificacionesFiltradas && notificacionesFiltradas.length > 0 ? (
+                    <FlatList
+                        data={notificacionesFiltradas}
+                        keyExtractor={item => item.id_notificaciones.toString()}
+                        contentContainerStyle={styles.listInner}
+                        renderItem={({ item }) => (
+                            <TouchableOpacity
+                                style={styles.item}
+                                onPress={() => handleItemPress(item.id_notificaciones)}
+                            >
+                                <View style={styles.itemHeader}>
+                                    <Text style={styles.itemTitle}>{item.titulo}</Text>
+                                </View>
+                                <View style={styles.itemDetails}>
+                                    <Text style={styles.itemResumen}>{item.resumen}</Text>
+                                    <Text style={styles.itemAuthor}>{item.nombre_autor}</Text>
+                                    <Image
+                                        style={styles.itemImage}
+                                        source={item.imagen ? { uri: item.imagen } : getPlaceholderImage(item.id_categoria)}
+                                    />
+                                    <Text style={styles.itemCategory}>{item.nombre_categoria_notificaciones}</Text>
+                                    <Text style={styles.itemDate}>{new Date(item.fecha_publicacion).toLocaleDateString()}</Text>
+                                </View>
+                            </TouchableOpacity>
+                        )}
+                    />
+                ) : (
+                    <View style={styles.noNotificacionesContainer}>
+                        <Text style={styles.noNotificacionesMessage}>No hay notificaciones disponibles.</Text>
+                    </View>
+                )}
+            </View>
+        </View>
+    );
+};
 
-            <div className="notificaciones-list" >
-                <div className="notificaciones-list-inner">
-                    
-                    {notificacionesFiltradas && notificacionesFiltradas.length > 0 ? (
-                        notificacionesFiltradas.map((notificaciones) => (
-
-                            placeholderImage = notificaciones.id_categoria == 1 ? placeholder_1 : 
-                                               notificaciones.id_categoria == 2 ? placeholder_2 : 
-                                               notificaciones.id_categoria == 3 ? placeholder_3 : 
-                                               notificaciones.id_categoria == 4 ? placeholder_4 : '',
-
-                            <div onClick={() => navigate(`/notificaciones/${notificaciones.id_notificaciones}`)} className="notificaciones-item" key={notificaciones.id_notificaciones}>
-                                <div className="notificaciones-item-header">
-                                    <h3 className="notificaciones-item-title">{notificaciones.titulo}</h3>
-                                    
-                                </div>
-                                <div className="notificaciones-item-details">
-                                    
-                                    <span className="notificaciones-item-resumen">{notificaciones.resumen}</span>
-                                    <p className="notificaciones-item-author">{notificaciones.nombre_autor}</p>
-                                    <img 
-                                        className="notificaciones-item-image" 
-                                        src={notificaciones.imagen ? notificaciones.imagen : placeholderImage} 
-                                        alt={notificaciones.titulo}
-
-                                        />
-                                    <p className="notificaciones-item-category">{notificaciones.nombre_categoria_notificaciones}</p>
-                                    <p className="notificaciones-item-date">{new Date(notificaciones.fecha_publicacion).toLocaleDateString()}</p>
-                                </div>
-                            </div>
-                        ))
-                    ) : (
-                        <div className="no-notificaciones-container">
-                            <p className="no-notificaciones-message">No hay notificaciones disponibles.</p>
-                        </div>
-                    )}
-
-                </div>
-            </div>
-        </div >
-
-
-        </React.Fragment>
-    )
-
-}
-
-export default Notificaciones
+export default Notificaciones;

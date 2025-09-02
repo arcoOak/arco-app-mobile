@@ -1,23 +1,16 @@
-import React, { use, useMemo } from 'react';
-import { useParams, useLocation, useNavigate } from 'react-router-dom'; // Import useNavigate
-import { useState, useEffect } from 'react';
-import './EspaciosDetalle.css'; // Crea un archivo CSS para este componente
-import '../../css/Concecionario.css';
 
-import LoadingModal from '../../../components/modals/LoadingModal.jsx';
-import ExitosoModal from '../../../components/modals/ExitosoModal.jsx';
-import EspacioReservaModal from './EspacioReservaModal'; // Asegúrate de que la ruta sea correcta
-
+import React, { useMemo, useState, useEffect } from 'react';
+import { View, Text, TouchableOpacity, ScrollView, StyleSheet, ImageBackground, Picker } from 'react-native';
+import LoadingModal from '../../../components/modals/LoadingModal';
+import ExitosoModal from '../../../components/modals/ExitosoModal';
+import EspacioReservaModal from './EspacioReservaModal';
 import espacioService from '../../services/espacio.service';
 import reservasService from '../../services/reservas.service';
-
-import {useAuth } from '../../context/AuthContext'; // Importa el contexto de autenticación
-
-import ButtonVolver from '../../../components/buttons/ButtonVolver.jsx'; // Importa el botón de volver
-
-import Button from '../../../components/buttons/Button.js'; // Importa el botón de reservar
-
-import {TIPOS_TRANSACCION} from '../../constants/transaccion.constants.js'; 
+import { useAuth } from '../../context/AuthContext';
+import ButtonVolver from '../../../components/buttons/ButtonVolver';
+import Button from '../../../components/buttons/Button';
+import { TIPOS_TRANSACCION } from '../../constants/transaccion.constants';
+import styles from './EspaciosDetalle.styles';
 
 // Función para obtener el número de días en un mes específico
 const getDaysInMonth = (year, month) => {
@@ -31,9 +24,9 @@ const getFirstDayOfMonth = (year, month) => {
 
 export default function EspaciosDetalle() { // Recibe concesionarios como prop
 
-    const { user, actualizarSaldoBilletera } = useAuth(); // Obtiene el usuario autenticado desde el contexto
-    const { id } = useParams();
-    const navigate = useNavigate(); // Hook para navegar programáticamente
+    const { user, actualizarSaldoBilletera } = useAuth();
+    // Obtener id desde props o navigation params según tu stack
+    const id = null; // <-- Ajusta según tu navegación
     const [loading, setLoading] = useState(false); // Estado para manejar la carga de datos
     const [showExitosoModal, setShowExitosoModal] = useState(false); // Estado para manejar el modal de éxito
     
@@ -56,9 +49,8 @@ export default function EspaciosDetalle() { // Recibe concesionarios como prop
     const [invitadosReserva, setInvitadosReserva] = useState([]);
 
 
-    const location = useLocation();
-
-    const backLocation = location.state?.returnTo || '/espacios';
+    // const navigation = useNavigation();
+    // const backLocation = navigation.canGoBack() ? null : '/espacios';
 
     // Buscar el espacio por ID
 
@@ -454,15 +446,15 @@ export default function EspaciosDetalle() { // Recibe concesionarios como prop
 
 
     return (
-        <React.Fragment>
+        <View style={{ flex: 1, backgroundColor: '#fff' }}>
             <ExitosoModal
-                visible={showExitosoModal} 
-                mensaje='¡Reserva realizada con éxito!'
-            ></ExitosoModal>
-            <EspacioReservaModal 
-                visible={showEspacioReservaModal} 
-                onClose={() => handleCloseModal()} 
-                onConfirm={() => handleConfirmarReserva()}
+                visible={showExitosoModal}
+                mensaje="¡Reserva realizada con éxito!"
+            />
+            <EspacioReservaModal
+                visible={showEspacioReservaModal}
+                onClose={handleCloseModal}
+                onConfirm={handleConfirmarReserva}
                 espacio={espacio}
                 unidadSeleccionada={unidadesEspacio.find(unidad => unidad.id_espacio_reservable_unidad === unidadSeleccionada)}
                 fecha={new Date(selectedYear, selectedMonth, selectedDate)}
@@ -471,151 +463,150 @@ export default function EspaciosDetalle() { // Recibe concesionarios como prop
                 nota={notaReserva}
                 setNota={setNotaReserva}
                 familiares={invitadosFamiliares}
-                setFamiliares ={setInvitadosFamiliares}
+                setFamiliares={setInvitadosFamiliares}
                 invitados={invitadosReserva}
                 setInvitados={setInvitadosReserva}
-
-                ></EspacioReservaModal>
+            />
             <LoadingModal visible={loading} />
-            <div className="reserva-header">
-
-                <div className='boton-volver-container'>
-                    <ButtonVolver to={backLocation} className="boton-volver-white" />
-                </div>
-
-                {/* <img src={`../${espacio.img}`} alt={espacio.name} className="reserva-img" /> */}
-                <h1>{espacio?.nombre_espacio_reservable}</h1>
-                <p className="espacio-detalle-description">{espacio?.descripcion_espacio_reservable}</p>
-                {
-                    costeReserva > 0 && (<p className='detalle-costo-hora'>{costeReserva}$/hora</p>)
-                }
-                
-            </div>
-
-            <div className="reserva-container">
-                    <main className="booking-main-content">
-
-                        <div className='reserva-unidades-container'>
+            <ScrollView>
+                <ImageBackground
+                    source={require('../../img/reservas/bg-2.jpg')}
+                    style={styles.reservaHeader}
+                    resizeMode="cover"
+                >
+                    <View style={styles.botonVolverContainer}>
+                        <ButtonVolver /*to={backLocation}*/ style={styles.botonVolverWhite} />
+                    </View>
+                    <Text style={styles.reservaHeaderTitle}>{espacio?.nombre_espacio_reservable}</Text>
+                    <Text style={styles.espacioDetalleDescription}>{espacio?.descripcion_espacio_reservable}</Text>
+                    {costeReserva > 0 && (
+                        <Text style={styles.detalleCostoHora}>{costeReserva}$/hora</Text>
+                    )}
+                </ImageBackground>
+                <View style={styles.reservaContainer}>
+                    <View style={styles.bookingMainContent}>
+                        <View style={styles.reservaUnidadesContainer}>
                             {unidadesEspacio.length > 0 && (
-                                <div className="unidades-list">
-                                    <h2>Seleccionables</h2>
+                                <View style={styles.unidadesList}>
+                                    <Text style={{ fontWeight: 'bold', fontSize: 18, marginBottom: 8 }}>Seleccionables</Text>
                                     {unidadesEspacio.map(unidad => (
-                                        <div 
-                                            key={unidad.id_espacio_reservable_unidad} 
-                                            onClick={() => handleUnidadSeleccionada(unidad)}
-                                            className={`unidad-item ${unidadSeleccionada == unidad.id_espacio_reservable_unidad ? 'active' : ''}`}>
-                                            <div className="unidad-info">
-                                                <h3>{unidad.nombre_unidad}</h3>
-                                                <p className="unidad-capacity">Capacidad: {unidad.capacidad}</p>
-                                                <p className="unidad-costo">{unidad.costo_reserva > 0 ? 
-                                                <span>{unidad.costo_reserva}$</span> : <span>Sin Coste</span>}
-                                                </p>
-                                            </div>
-                                        </div>
+                                        <TouchableOpacity
+                                            key={unidad.id_espacio_reservable_unidad}
+                                            style={[styles.unidadItem, unidadSeleccionada == unidad.id_espacio_reservable_unidad && styles.unidadItemActive]}
+                                            onPress={() => handleUnidadSeleccionada(unidad)}
+                                        >
+                                            <View style={styles.unidadInfo}>
+                                                <Text style={{ fontWeight: 'bold', fontSize: 16 }}>{unidad.nombre_unidad}</Text>
+                                                <Text style={styles.unidadCapacity}>Capacidad: {unidad.capacidad}</Text>
+                                                <Text style={styles.unidadCosto}>{unidad.costo_reserva > 0 ? `${unidad.costo_reserva}$` : 'Sin Coste'}</Text>
+                                            </View>
+                                        </TouchableOpacity>
                                     ))}
-                                </div>
-                            ) }
-                        </div>
-
-
-                        <section className="date-section">
-                            <div className='date-selectors-container'>
-                                <div className="date-selectors">
-                                    <select
-                                        value={selectedMonth}
-                                        onChange={(e) => handleChangeMonth(e)}
+                                </View>
+                            )}
+                        </View>
+                        <View style={styles.dateSection}>
+                            <View style={styles.dateSelectorsContainer}>
+                                <View style={styles.dateSelectors}>
+                                    {/* Puedes usar Picker de @react-native-picker/picker para selects nativos */}
+                                    {/* Aquí se muestra un ejemplo básico, puedes mejorar la UI */}
+                                    <Picker
+                                        selectedValue={selectedMonth}
+                                        style={{ width: 140, marginRight: 8 }}
+                                        onValueChange={(itemValue) => {
+                                            setSelectedMonth(itemValue);
+                                            setSelectedDate(1);
+                                            setListaHorariosSeleccionados([]);
+                                        }}
                                     >
                                         {monthOptions.map(month => (
-                                            <option key={month.value} value={month.value}>{month.name}</option>
+                                            <Picker.Item key={month.value} label={month.name} value={month.value} />
                                         ))}
-                                    </select>
-                                    <select
-                                        value={selectedYear}
-                                        onChange={(e) => handleChangeYear(e)}
-                                        disabled={true}
+                                    </Picker>
+                                    <Picker
+                                        selectedValue={selectedYear}
+                                        style={{ width: 100 }}
+                                        enabled={false}
                                     >
-                                        <option value={currentYear}>{currentYear}</option>
-                                    </select>
-                                </div>
-                            </div>
-
-                            <div className="calendar-grid">
+                                        <Picker.Item label={currentYear.toString()} value={currentYear} />
+                                    </Picker>
+                                </View>
+                            </View>
+                            <View style={styles.calendarGrid}>
                                 {daysOfWeek.map(day => (
-                                    <div key={day} className="day-of-week">{day}</div>
+                                    <Text key={day} style={styles.dayOfWeek}>{day}</Text>
                                 ))}
-                                {/* Celdas vacías para alinear el primer día del mes */}
-                                {Array(firstDay).fill(null).map((_, i) => <div key={`empty-${i}`} className="calendar-day empty"></div>)}
+                                {Array(firstDay).fill(null).map((_, i) => (
+                                    <View key={`empty-${i}`} style={styles.calendarDay} />
+                                ))}
                                 {dates.map(date => {
-                                    // Crear un objeto Date para el día actual en el bucle
                                     const dayInCalendar = new Date(selectedYear, selectedMonth, date);
-                                    // Normalizar today a inicio del día para la comparación
                                     const todayStart = new Date(currentYear, currentMonth, currentDay);
                                     const isPastDate = dayInCalendar < todayStart;
                                     const isSelected = date === selectedDate;
-
                                     return (
-                                        <div
+                                        <TouchableOpacity
                                             key={date}
-                                            className={`calendar-day ${isSelected ? 'selected' : ''} ${isPastDate ? 'disabled' : ''}`}
-                                            onClick={() => handleDateClick(date)}
+                                            style={[
+                                                styles.calendarDay,
+                                                isSelected && styles.calendarDaySelected,
+                                                isPastDate && styles.calendarDayDisabled,
+                                            ]}
+                                            disabled={isPastDate}
+                                            onPress={() => handleDateClick(date)}
                                         >
-                                            {date}
-                                        </div>
+                                            <Text style={{ color: isSelected ? '#fff' : '#222', fontWeight: isSelected ? 'bold' : 'normal' }}>{date}</Text>
+                                        </TouchableOpacity>
                                     );
                                 })}
-                            </div>
-                        </section>
-
-                        <section className="time-section">
-                            <h2>Horario</h2>
-                            <div className='time-range'>
-                                <span className="time-value">{formatearHora(horaApertura)}</span>
-                                <span className="time-separator">-</span>
-                                <span className="time-value">{formatearHora(horaCierre)}</span>
-                            </div>
-                            
-                            <div className='time-selectors-container'>
-                                <div className="time-selectors">
-                                    {
-                                        listaHorarios.map(horario => {
-                                            return (
-                                                <div 
-                                                    className={`time-selectors-item ${horario.estado} ${listaHorariosSeleccionados.includes(horario.hora24) ? 'active' : ''}`}
-                                                    key={horario.hora24}
-                                                    onClick={() => {
-                                                        horario.estado == 'disponible' ? handleSelectHour(horario.hora24) : null;
-                                                    }}
-                                                >
-                                                    <p>
-                                                        {horario.ampm === horario.ampmNexHora
-                                                            ? `${horario.hora} - ${horario.nexHora} ${horario.ampm}`
-                                                            : `${horario.hora}${horario.ampm} - ${horario.nexHora}${horario.ampmNexHora}`}
-                                                    </p>
-                                                </div>
-                                            )
-                                        })
-                                    }
-                                    
-                                </div>
-                            </div>
-
-                        </section>
-                    </main>
-
-                    <footer className="booking-footer">
-                        
-
-                        <Button 
+                            </View>
+                        </View>
+                        <View style={styles.timeSection}>
+                            <Text style={{ fontWeight: 'bold', fontSize: 18, marginBottom: 8 }}>Horario</Text>
+                            <View style={styles.timeRange}>
+                                <Text style={styles.timeValue}>{formatearHora(horaApertura)}</Text>
+                                <Text style={styles.timeSeparator}>-</Text>
+                                <Text style={styles.timeValue}>{formatearHora(horaCierre)}</Text>
+                            </View>
+                            <View style={styles.timeSelectorsContainer}>
+                                <View style={styles.timeSelectors}>
+                                    {listaHorarios.map(horario => {
+                                        const isActive = listaHorariosSeleccionados.includes(horario.hora24);
+                                        const isDisabled = horario.estado !== 'disponible';
+                                        return (
+                                            <TouchableOpacity
+                                                key={horario.hora24}
+                                                style={[
+                                                    styles.timeSelectorsItem,
+                                                    isActive && styles.timeSelectorsItemActive,
+                                                    isDisabled && styles.timeSelectorsItemDisabled,
+                                                ]}
+                                                disabled={isDisabled}
+                                                onPress={() => handleSelectHour(horario.hora24)}
+                                            >
+                                                <Text style={{ color: isActive ? '#fff' : '#222', fontWeight: isActive ? 'bold' : 'normal' }}>
+                                                    {horario.ampm === horario.ampmNexHora
+                                                        ? `${horario.hora} - ${horario.nexHora} ${horario.ampm}`
+                                                        : `${horario.hora}${horario.ampm} - ${horario.nexHora}${horario.ampmNexHora}`}
+                                                </Text>
+                                            </TouchableOpacity>
+                                        );
+                                    })}
+                                </View>
+                            </View>
+                        </View>
+                    </View>
+                    <View style={styles.bookingFooter}>
+                        <Button
                             disabled={isBotonReservarDisabled}
-                            onClick={() => { setShowEspacioReservaModal(true) }}
-                            className='primary big'
+                            onPress={() => setShowEspacioReservaModal(true)}
+                            style={styles.proceedButton}
                         >
                             {totalReserva > 0 ? `Reservar por $${totalReserva}` : 'Reservar'}
                         </Button>
-
-                    </footer>
-
-            </div>
-        </React.Fragment>
+                    </View>
+                </View>
+            </ScrollView>
+        </View>
     );
 }

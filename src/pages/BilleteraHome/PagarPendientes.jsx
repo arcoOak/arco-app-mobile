@@ -1,172 +1,145 @@
 // src/components/PaymentDetail.jsx
-import React, { useState, useEffect, useMemo  } from 'react'; // Importa useState
-import { useParams, useNavigate } from 'react-router-dom';
-import './PagosPendientes.css';
 
-import LoadingModal from '../../../components/modals/LoadingModal.jsx';
-import ExitosoModal from '../../../components/modals/ExitosoModal.jsx';
-
-import transaccionesService from '../../services/transacciones.service'; // Importa el servicio de transacciones
+import React, { useState, useEffect } from 'react';
+import { View, Text, ScrollView, TouchableOpacity, FlatList } from 'react-native';
+import LoadingModal from '../../../components/modals/LoadingModal';
+import ExitosoModal from '../../../components/modals/ExitosoModal';
+import transaccionesService from '../../services/transacciones.service';
 import billeteraService from '../../services/billetera.service.js';
-
-import { useAuth } from '../../context/AuthContext'; // Importa el contexto de autenticación
-
-import Button from '../../../components/buttons/Button.js';
-import ButtonVolver from '../../../components/buttons/ButtonVolver.jsx';
-
-import {TIPOS_TRANSACCION} from '../../constants/transaccion.constants.js'; 
+import { useAuth } from '../../context/AuthContext';
+import ButtonVolver from '../../../components/buttons/ButtonVolver';
+import styles from './PagosPendientes.styles';
+import { TIPOS_TRANSACCION } from '../../constants/transaccion.constants.js';
 
 
 const formatDate = (dateString) => {
+    if (!dateString) return '';
     const date = new Date(dateString);
     const options = { year: 'numeric', month: 'long', day: 'numeric' };
     return date.toLocaleDateString('es-ES', options);
 };
 
 
-const PagarPendientes = () => {
-    const { id } = useParams();
-    const navigate = useNavigate();
 
-    const { user, actualizarSaldoBilletera } = useAuth(); // Obtiene el usuario del contexto de autenticación
-
-    const [pagosPendientes, setPagosPendientes] = useState([]); // 
-
-    const [loading, setLoading] = useState(true); // Estado para manejar la carga de datos
-
+const PagarPendientes = ({ navigation }) => {
+    const { user, actualizarSaldoBilletera } = useAuth();
+    const [pagosPendientes, setPagosPendientes] = useState([]);
+    const [loading, setLoading] = useState(true);
     const [showExitosoModal, setShowExitosoModal] = useState(false);
-
-    const backLocation = location.state?.backLocation || '/';
+    const backLocation = navigation?.canGoBack() ? null : '/';
 
     useEffect(() => {
-
         const obtenerPagosPendientes = async () => {
             try {
                 const response = await transaccionesService.getTransaccionesPendientes(user.id_socio);
-                console.log(response);
                 setPagosPendientes(response);
             } catch (error) {
+                // eslint-disable-next-line no-console
                 console.error('Error al obtener los pagos pendientes:', error);
             }
         };
-
-        if(user) {
-            obtenerPagosPendientes();
-        }
-
-        setTimeout( () => {
-            setLoading(false); // Cambia el estado de carga a false después de 1 segundo
-        }, 500)
-
-
-    },[user] );
+        if (user) obtenerPagosPendientes();
+        setTimeout(() => setLoading(false), 500);
+    }, [user]);
 
     const handlePagar = async (transaccion) => {
-
         const obtenerPagosPendientes = async () => {
             try {
                 const response = await transaccionesService.getTransaccionesPendientes(user.id_socio);
-                console.log(response);
                 setPagosPendientes(response);
             } catch (error) {
+                // eslint-disable-next-line no-console
                 console.error('Error al obtener los pagos pendientes:', error);
             }
         };
-
         try {
             const transaccionData = {
                 id_pago_asociado: transaccion.id_pago_asociado,
                 id_billetera: user.id_billetera,
                 id_tipo_transaccion: transaccion.id_tipo_transaccion,
-                monto: (transaccion.total_transaccion)
-            }
-
+                monto: transaccion.total_transaccion,
+            };
             let response;
-
-            if(TIPOS_TRANSACCION.RECARGA == transaccionData.id_tipo_transaccion){
+            if (TIPOS_TRANSACCION.RECARGA == transaccionData.id_tipo_transaccion) {
                 response = await billeteraService.validarRecarga(transaccionData);
-            }else{
+            } else {
                 response = await transaccionesService.pagarTransaccion(transaccionData);
             }
-            
-
-            if(response) {
+            if (response) {
                 setShowExitosoModal(true);
                 actualizarSaldoBilletera();
             }
-
         } catch (error) {
+            // eslint-disable-next-line no-console
             console.error('Error al procesar el pago:', error);
-        }finally{
+        } finally {
             setLoading(false);
             setTimeout(() => {
-                setShowExitosoModal(false); // Cerrar modal de éxito después de 2
-                
-                if(user) {
-                    obtenerPagosPendientes();
-                }
+                setShowExitosoModal(false);
+                if (user) obtenerPagosPendientes();
             }, 2000);
-
-            
         }
-    }
+    };
 
+    const renderPayment = ({ item }) => (
+        <View style={styles.detailCard}>
+            <View style={[styles.paymentHeader, styles.paymentHeaderPendiente]}>
+                <Text style={styles.paymentTitle}>{item.descripcion_contenido}</Text>
+            </View>
+            <View style={styles.paymentDetails}>
+                <Text style={styles.paymentDate}>
+                    <Text style={{ fontWeight: 'bold' }}>Fecha: </Text>
+                    {formatDate(item.fecha_generacion)}
+                </Text>
+                <Text style={styles.paymentAmount}>
+                    <Text style={{ fontWeight: 'bold' }}>Monto: </Text>${item.total_transaccion}
+                </Text>
+                {item.id_tipo_transaccion !== TIPOS_TRANSACCION.RECARGA && (
+                    <TouchableOpacity
+                        style={{ backgroundColor: '#19875422', borderRadius: 8, marginTop: 10, padding: 10, alignItems: 'center' }}
+                        onPress={() => handlePagar(item)}
+                        activeOpacity={0.8}
+                    >
+                        <Text style={{ color: '#198754', fontWeight: 'bold' }}>Pagar</Text>
+                    </TouchableOpacity>
+                )}
+            </View>
+        </View>
+    );
 
-    if (!pagosPendientes || pagosPendientes.length === 0 ) {
+    if (!pagosPendientes || pagosPendientes.length === 0) {
         return (
-            <React.Fragment>
+            <>
                 <ButtonVolver to={backLocation} className="boton-volver" />
-                <div className="payment-detail-container">
-                    <h2>No se encontraron pagos pendientes</h2>
-                </div>
-            </React.Fragment>
+                <View style={styles.paymentDetailContainer}>
+                    <Text style={{ fontWeight: 'bold', fontSize: 18, marginBottom: 12 }}>
+                        No se encontraron pagos pendientes
+                    </Text>
+                </View>
+            </>
         );
     }
 
     return (
-        <React.Fragment>
-            <LoadingModal visible={loading}></LoadingModal>
+        <>
+            <LoadingModal visible={loading} />
             <ButtonVolver to={backLocation} className="boton-volver" />
-            <ExitosoModal 
-                visible={showExitosoModal} 
-                mensaje='¡Pago con éxito!'  
-            />
-        <div className="payment-detail-container">
-            <div className="detail-header">
-                <h2>Pagos Pendientes</h2>
-            </div>
-
-            <div className="payments-container">
-
-            {pagosPendientes.map((payment, idx) => (
-
-                <div className={`detail-card pendiente`} key={idx}>
-                    <div className={`payment-header pendiente`}>
-                        <h3 className='payment-title'>{payment.descripcion_contenido}</h3>
-                    </div>
-                    <div className="payment-details">
-                        <p className='payment-date'><strong>Fecha: </strong> {formatDate(payment.fecha_generacion)}</p>
-                        <p className='payment-amount'><strong>Monto: </strong> ${payment.total_transaccion}</p>
-
-                    { payment.id_tipo_transaccion !== TIPOS_TRANSACCION.RECARGA &&
-                    <Button
-                        onClick={() => {handlePagar(payment)}}
-                        className='primary'
-                    >
-                        Pagar
-                    </Button>
+            <ExitosoModal visible={showExitosoModal} mensaje="¡Pago con éxito!" />
+            <View style={styles.paymentDetailContainer}>
+                <View style={styles.detailHeader}>
+                    <Text style={styles.detailHeaderTitle}>Pagos Pendientes</Text>
+                </View>
+                <FlatList
+                    data={pagosPendientes}
+                    keyExtractor={(_, idx) => idx.toString()}
+                    renderItem={renderPayment}
+                    ListEmptyComponent={
+                        <Text style={styles.noPaymentsMessage}>No hay pagos pendientes.</Text>
                     }
-
-                </div>
-            </div>)
-            )}
-            </div>
-            {pagosPendientes.length === 0 && (
-                <p className="no-payments-message">No hay pagos pendientes.</p>
-            )
-            }
-        </div>
-        </React.Fragment>
+                    contentContainerStyle={{ paddingBottom: 32 }}
+                />
+            </View>
+        </>
     );
 };
 

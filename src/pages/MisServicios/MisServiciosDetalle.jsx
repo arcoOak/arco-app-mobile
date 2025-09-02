@@ -6,88 +6,69 @@ Cambio de contraseña en perfil de usuario
 
 */ 
 
-import React, { useState, useRef, useEffect, useMemo } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
-import './MisServiciosDetalle.css'; 
 
+import React, { useState, useEffect } from 'react';
+import { View, Text, ScrollView, TouchableOpacity } from 'react-native';
+import { useRoute, useNavigation } from '@react-navigation/native';
 import { useAuth } from '../../context/AuthContext';
-
 import LoadingModal from '../../components/modals/LoadingModal';
-
 import reservasServicioService from '../../services/reservasServicio.service';
-
 import BotonVolver from '../../components/buttons/ButtonVolver';
+import styles from './MisServiciosDetalle.styles';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+
 
 
 const formatearHorarios = (horarios) => {
-            if (!horarios || horarios.length === 0) {
-                return [];
+    if (!horarios || horarios.length === 0) {
+        return [];
+    }
+    const horas = horarios.map(h => parseInt(h.hora_reserva.slice(0, 2), 10));
+    const sortedHorarios = [...horas].sort((a, b) => a - b);
+    const result = [];
+    let startHour = sortedHorarios[0];
+    let endHour = sortedHorarios[0];
+    for (let i = 0; i < sortedHorarios.length; i++) {
+        const currentHour = sortedHorarios[i];
+        const nextHour = sortedHorarios[i + 1];
+        if (currentHour + 1 === nextHour) {
+            endHour = nextHour;
+        } else {
+            let formattedStart = `${startHour.toString().padStart(2, '0')}:00`;
+            let formattedEnd = `${(endHour + 1).toString().padStart(2, '0')}:00`;
+            if (endHour === 23) {
+                formattedEnd = '00:00';
             }
-
-            horarios = horarios.map(h => parseInt( h.hora_reserva.slice(0, 2), 10) ); // Asegúrate de que todos los horarios sean enteros
-
-            // Sort the array to ensure consecutive hours are next to each other
-            const sortedHorarios = [...horarios].sort((a, b) => a - b);
-            const result = [];
-            let startHour = parseInt(sortedHorarios[0]);
-            let endHour = parseInt(sortedHorarios[0]);
-
-            for (let i = 0; i < sortedHorarios.length; i++) {
-                const currentHour = parseInt(sortedHorarios[i]);
-                const nextHour = parseInt(sortedHorarios[i + 1]);
-
-                if (currentHour + 1 === nextHour) {
-                // If the next hour is consecutive, extend the current range
+            result.push(`${formattedStart} - ${formattedEnd}`);
+            if (nextHour !== undefined) {
+                startHour = nextHour;
                 endHour = nextHour;
-                } else {
-                // If not consecutive, or if it's the last hour,
-                // finalize the current range and add it to the result
-                let formattedStart = `${startHour.toString().padStart(2, '0')}:00`;
-                let formattedEnd = `${(endHour + 1).toString().padStart(2, '0')}:00`;
-
-                // Handle the case where 23:00 - 00:00 should be 23:00 - 24:00 (or similar)
-                if (endHour === 23) {
-                    formattedEnd = '00:00'; // For 23:00 to 00:00 (next day)
-                }
-
-                result.push(`${formattedStart} - ${formattedEnd}`);
-
-                // Reset start and end for the next potential range
-                if (nextHour !== undefined) {
-                    startHour = nextHour;
-                    endHour = nextHour;
-                }
-                }
             }
-            return result;
-        };
+        }
+    }
+    return result;
+};
+
 
 export default function MisServiciosDetalle() {
-    const navigate = useNavigate();
-
-    const { user } = useAuth(); 
-    const { id } = useParams();
+    const navigation = useNavigation();
+    const route = useRoute();
+    const { user } = useAuth();
+    const { id } = route.params || {};
     const [loading, setLoading] = useState(false);
-
-    //Datos a Cargar
-
     const [miServicioDetalle, setMiServicioDetalle] = useState(null);
     const [listaHoras, setListaHoras] = useState([]);
 
-  
     useEffect(() => {
         const fetchData = async () => {
             setLoading(true);
-            try{
+            try {
                 const [servicio, horas] = await Promise.all([
                     reservasServicioService.getReservaServicioById(id),
                     reservasServicioService.getHorasReservadasPorReservaServicios(id)
                 ]);
-
                 setMiServicioDetalle(servicio);
                 setListaHoras(horas);
-
-
             } catch (error) {
                 console.error('Error al cargar los datos:', error);
             } finally {
@@ -97,81 +78,65 @@ export default function MisServiciosDetalle() {
         fetchData();
     }, []);
 
-    const handleNavigate = (path, id) =>{
-        navigate(`/${path}/${id}`, { state: { returnTo: location.pathname } });
-    }
+    const handleNavigate = (path, id) => {
+        // navigation.navigate(path, { id, returnTo: route.name });
+    };
 
     return (
-        <React.Fragment>
-        <LoadingModal visible={loading} />
-
-        <BotonVolver to="/mis-servicios" />
-
-
-
-        <div className="reservas-detalle-container">
-            <div className="reservas-detalle-header">
-            <h1>Detalle del Servicio</h1>
+        <ScrollView style={styles.container}>
+            <LoadingModal visible={loading} />
+            <BotonVolver to="MisServicios" />
+            <View style={styles.header}>
+                <Text style={styles.headerTitle}>Detalle del Servicio</Text>
+            </View>
             {miServicioDetalle ? (
-                <div className="reserva-info">
-                    <div className='reserva-info-header'>
-                        <h2>Información de la Reserva</h2>
-                        <p><strong>Fecha Reserva:</strong> {new Date(miServicioDetalle.fecha_reservacion).toLocaleDateString()}</p>
+                <View style={styles.reservaInfo}>
+                    <View style={styles.reservaInfoHeader}>
+                        <Text style={styles.sectionTitle}>Información de la Reserva</Text>
+                        <Text><Text style={{ fontWeight: 'bold' }}>Fecha Reserva:</Text> {new Date(miServicioDetalle.fecha_reservacion).toLocaleDateString()}</Text>
 
-                        <div className='info-card-link' onClick={() => handleNavigate('comercios', miServicioDetalle.id_comercio)}>
-                            <div className='info-card-link__text'>
-                                <span className='info-card-link__label'>Prestador del Servicio</span>
-                                <span className='info-card-link__value'>{miServicioDetalle.nombre_comercio}</span>
-                            </div>
-                            <i className='bx bx-chevron-right info-card-link__icon'></i>
-                        </div>
+                        <TouchableOpacity style={styles.infoCardLink} onPress={() => handleNavigate('Comercios', miServicioDetalle.id_comercio)}>
+                            <View style={styles.infoCardLinkText}>
+                                <Text style={styles.infoCardLinkLabel}>Prestador del Servicio</Text>
+                                <Text style={styles.infoCardLinkValue}>{miServicioDetalle.nombre_comercio}</Text>
+                            </View>
+                            <Icon name="chevron-right" size={24} style={styles.infoCardLinkIcon} />
+                        </TouchableOpacity>
 
-                        <div className='info-card-link' onClick={() => handleNavigate('servicios', miServicioDetalle.id_servicio_reservable)}>
-                            <div className='info-card-link__text'>
-                                <span className='info-card-link__label'>Servicio</span>
-                                <span className='info-card-link__value'>{miServicioDetalle.nombre_servicio_reservable}</span>
-                            </div>
-                            <i className='bx bx-chevron-right info-card-link__icon'></i>
-                        </div>
+                        <TouchableOpacity style={styles.infoCardLink} onPress={() => handleNavigate('Servicios', miServicioDetalle.id_servicio_reservable)}>
+                            <View style={styles.infoCardLinkText}>
+                                <Text style={styles.infoCardLinkLabel}>Servicio</Text>
+                                <Text style={styles.infoCardLinkValue}>{miServicioDetalle.nombre_servicio_reservable}</Text>
+                            </View>
+                            <Icon name="chevron-right" size={24} style={styles.infoCardLinkIcon} />
+                        </TouchableOpacity>
 
-                        <p><strong>Cantidad de Horas Reservadas:</strong> {listaHoras.length}</p>
-                    </div>
-                    <div className='reserva-info-details'>
-                        <h2>Detalles del Servicio</h2>
-                        
-                        <p><strong>Capacidad:</strong> {miServicioDetalle.capacidad}</p>
-                        <p><strong>Coste por Hora:</strong> ${miServicioDetalle.costo_servicio}</p>
-                        {miServicioDetalle.nota &&
-                            <p><strong>Información Adicional:</strong> <br/> {miServicioDetalle.nota}</p>
-                        }
-                    </div>
-                </div>
-            
-                
+                        <Text><Text style={{ fontWeight: 'bold' }}>Cantidad de Horas Reservadas:</Text> {listaHoras.length}</Text>
+                    </View>
+                    <View style={styles.reservaInfoDetails}>
+                        <Text style={styles.sectionTitle}>Detalles del Servicio</Text>
+                        <Text><Text style={{ fontWeight: 'bold' }}>Capacidad:</Text> {miServicioDetalle.capacidad}</Text>
+                        <Text><Text style={{ fontWeight: 'bold' }}>Coste por Hora:</Text> ${miServicioDetalle.costo_servicio}</Text>
+                        {miServicioDetalle.nota ? (
+                            <Text><Text style={{ fontWeight: 'bold' }}>Información Adicional:</Text> {miServicioDetalle.nota}</Text>
+                        ) : null}
+                    </View>
+                </View>
             ) : (
-                <p className='loading-text'>Cargando detalles de la reserva...</p>
+                <Text style={styles.loadingText}>Cargando detalles de la reserva...</Text>
             )}
-            </div>
-
-            <div className='horas-reservadas'>
-            <h2>Horas Reservadas</h2>
-            {listaHoras.length > 0 ? (
-                <ul className='horas-list'>
-                    {formatearHorarios(listaHoras).map((hora, index) => (
-                        <li key={index}>{hora}</li>
-                    ))}
-                </ul>
-            ) : (
-                <p>No hay horas reservadas para esta reserva.</p>
-            )}
-            </div>
-
-            
-
-            
-        </div>
-        
-        
-        </React.Fragment>
+            <View style={styles.horasReservadas}>
+                <Text style={styles.sectionTitle}>Horas Reservadas</Text>
+                {listaHoras.length > 0 ? (
+                    <View style={styles.horasList}>
+                        {formatearHorarios(listaHoras).map((hora, index) => (
+                            <Text key={index} style={styles.horasListItem}>{hora}</Text>
+                        ))}
+                    </View>
+                ) : (
+                    <Text style={styles.loadingText}>No hay horas reservadas para esta reserva.</Text>
+                )}
+            </View>
+        </ScrollView>
     );
 }

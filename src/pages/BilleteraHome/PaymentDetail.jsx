@@ -1,23 +1,15 @@
 // src/components/PaymentDetail.jsx
-import React, { useState, useEffect, useMemo, useRef, useContext  } from 'react'; // Importa useState
-import { useParams, useNavigate, useLocation } from 'react-router-dom';
-import './PaymentDetail.css';
 
-import LoadingModal from '../../../components/modals/LoadingModal.jsx';
-
-import transaccionesService from '../../services/transacciones.service.js'; // Importa el servicio de billetera
-
-import { useAuth } from '../../context/AuthContext'; // Importa el contexto de autenticación
-
-import MesSelector from '../../../components/MesSelector.jsx'; // Importa el componente MesSelector
-
-import ButtonVolver from '../../../components/buttons/ButtonVolver.jsx'; // Importa el componente ButtonVolver
-
-import Button from '../../../components/buttons/Button.js';
-
-import ExitosoModal from '../../../components/modals/ExitosoModal.jsx';
-
-import {TIPOS_TRANSACCION} from '../../constants/transaccion.constants.js'; 
+import React, { useState, useEffect, useMemo } from 'react';
+import { View, Text, ScrollView, TouchableOpacity, FlatList } from 'react-native';
+import LoadingModal from '../../../components/modals/LoadingModal';
+import transaccionesService from '../../services/transacciones.service.js';
+import { useAuth } from '../../context/AuthContext';
+import MesSelector from '../../../components/MesSelector';
+import ButtonVolver from '../../../components/buttons/ButtonVolver';
+import ExitosoModal from '../../../components/modals/ExitosoModal';
+import styles from './PaymentDetail.styles';
+import { TIPOS_TRANSACCION } from '../../constants/transaccion.constants.js';
 
 const formatDate = (dateString) => {
     const date = new Date(dateString);
@@ -32,23 +24,14 @@ const formatPlural = (count, singular, plural) => {
 
 
 
-const PaymentDetail = () => {
-    const navigate = useNavigate();
-    const location = useLocation();
 
-    const mesHome = location.state?.mes;
-    const backLocation = location.state?.backLocation || '/';
-
-    const { user, actualizarSaldoBilletera } = useAuth(); // Obtiene el usuario del contexto de autenticación
-
-    const [registroTransacciones, setRegistroTransacciones] = useState([]); // 
-
-    const [loading, setLoading] = useState(true); // Estado para manejar la carga de datos
-
-    const [mesSeleccionado, setMesSeleccionado] = useState(mesHome || new Date().getMonth() + 1);
-
+const PaymentDetail = ({ navigation, route }) => {
+    const { user, actualizarSaldoBilletera } = useAuth();
+    const [registroTransacciones, setRegistroTransacciones] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [mesSeleccionado, setMesSeleccionado] = useState(new Date().getMonth() + 1);
     const [showExitosoModal, setShowExitosoModal] = useState(false);
-    
+    const backLocation = navigation?.canGoBack() ? null : '/';
 
     useEffect(() => {
         const obtenerRegistroTransacciones = async () => {
@@ -56,196 +39,188 @@ const PaymentDetail = () => {
             const anhoActual = new Date().getFullYear();
             try {
                 setLoading(true);
-                const response = await transaccionesService.getTransaccionesSocioCompletoPorMes(user.id_socio, mesSeleccionado, anhoActual);
-                console.log(response);
+                const response = await transaccionesService.getTransaccionesSocioCompletoPorMes(
+                    user.id_socio,
+                    mesSeleccionado,
+                    anhoActual
+                );
                 setRegistroTransacciones(response);
             } catch (error) {
+                // eslint-disable-next-line no-console
                 console.error('Error al obtener el registro de transacciones:', error);
             } finally {
                 setTimeout(() => {
-                    setLoading(false); // Cambia el estado de carga a false después de 500ms
+                    setLoading(false);
                 }, 500);
             }
         };
-
         obtenerRegistroTransacciones();
-
-
-    },[user] );
-   
+    }, [user, mesSeleccionado]);
 
     const handleHistoryItemClick = (id_billetera_transaccion) => {
-        if(id_billetera_transaccion && id_billetera_transaccion !== null) {
-            navigate(`/transaccion/${id_billetera_transaccion}`);
+        if (id_billetera_transaccion && id_billetera_transaccion !== null) {
+            navigation.navigate('TransaccionIndividual', { id: id_billetera_transaccion });
         }
     };
 
     const actualizarTransacciones = async (mes = mesSeleccionado) => {
         const anhoActual = new Date().getFullYear();
-        const transaccionesRespuesta = await transaccionesService.getTransaccionesSocioCompletoPorMes(user.id_socio, mes, anhoActual);
+        const transaccionesRespuesta = await transaccionesService.getTransaccionesSocioCompletoPorMes(
+            user.id_socio,
+            mes,
+            anhoActual
+        );
         setRegistroTransacciones(transaccionesRespuesta);
-    }
+    };
 
     const handleMesSeleccionado = (mes) => {
-                setMesSeleccionado(mes);
-                try{
-                    actualizarTransacciones(mes);
-                    setTimeout(() => {
-                        setLoading(false);
-                    }, 500); // Simulate a delay for loading state
-    
-                } catch (error) {
-                    console.error("Error fetching noticias por fecha:", error);
-                }
-        }
+        setMesSeleccionado(mes);
+        actualizarTransacciones(mes);
+        setTimeout(() => {
+            setLoading(false);
+        }, 500);
+    };
 
-    
-    let estadoPagoUnidad = 0;
-    let unidadTransaccion = '';
-         
+    const formatPlural = (count, singular, plural) => (count == 1 ? singular : plural);
 
     const handlePagar = async (transaccion) => {
         setLoading(true);
-        try{
+        try {
             const transaccionData = {
                 id_pago_asociado: transaccion.id_pago_asociado,
                 id_billetera: user.id_billetera,
                 id_tipo_transaccion: transaccion.id_tipo_transaccion,
-                monto: transaccion.total_transaccion
-            }
-            if(TIPOS_TRANSACCION.RECARGA == transaccionData.id_tipo_transaccion){
+                monto: transaccion.total_transaccion,
+            };
+            let response;
+            if (TIPOS_TRANSACCION.RECARGA == transaccionData.id_tipo_transaccion) {
                 response = await billeteraService.validarRecarga(transaccionData);
-            }else{
+            } else {
                 response = await transaccionesService.pagarTransaccion(transaccionData);
             }
-            
-            if(response) {
+            if (response) {
                 setShowExitosoModal(true);
-
-                actualizarSaldoBilletera()
-
+                actualizarSaldoBilletera();
                 setTimeout(() => {
                     actualizarTransacciones();
                 }, 500);
-
             }
         } catch (error) {
+            // eslint-disable-next-line no-console
             console.error('Error al procesar el pago:', error);
-        } finally{
+        } finally {
             setLoading(false);
-
             setTimeout(() => {
-                setShowExitosoModal(false); // Cerrar modal de éxito después de 2
+                setShowExitosoModal(false);
             }, 2000);
-
         }
+    };
 
-
-            // Actualiza
-    }
-
-   
+    const renderPayment = ({ item: payment }) => {
+        const estadoPagoUnidad = payment.estado_transaccion;
+        const unidadTransaccion =
+            payment.id_tipo_transaccion == TIPOS_TRANSACCION.MENSUALIDAD
+                ? ['Mensualidad', 'Mensualidades']
+                : payment.id_tipo_transaccion == TIPOS_TRANSACCION.RESERVACION
+                ? ['Hora Reservada', 'Horas Reservadas']
+                : payment.id_tipo_transaccion == TIPOS_TRANSACCION.COMPRA_COMERCIO
+                ? ['Producto', 'Productos']
+                : payment.id_tipo_transaccion == TIPOS_TRANSACCION.SERVICIO
+                ? ['Hora Reservada', 'Horas Reservadas']
+                : ['Unidad', 'Unidades'];
+        return (
+            <TouchableOpacity
+                style={{
+                    backgroundColor: '#fff',
+                    borderRadius: 12,
+                    marginBottom: 16,
+                    padding: 16,
+                    shadowColor: '#000',
+                    shadowOffset: { width: 0, height: 2 },
+                    shadowOpacity: 0.08,
+                    shadowRadius: 4,
+                    elevation: 2,
+                }}
+                onPress={() => handleHistoryItemClick(payment.id_billetera_transaccion)}
+                activeOpacity={0.8}
+            >
+                <View
+                    style={{
+                        backgroundColor: estadoPagoUnidad ? '#d1e7dd' : '#fff3cd',
+                        borderRadius: 8,
+                        padding: 10,
+                        marginBottom: 10,
+                        borderWidth: 2,
+                        borderColor: estadoPagoUnidad ? '#28a745' : '#ffc107',
+                    }}
+                >
+                    <Text style={{ fontWeight: 'bold', fontSize: 16 }}>{payment.tipo_transaccion}</Text>
+                </View>
+                <View>
+                    <Text style={{ color: '#4B5563', marginBottom: 2 }}>
+                        <Text style={{ fontWeight: 'bold' }}>Fecha: </Text>
+                        {formatDate(payment.fecha_generacion)}
+                    </Text>
+                    <Text style={{ color: '#4B5563', marginBottom: 2 }}>
+                        <Text style={{ fontWeight: 'bold' }}>Monto: </Text>${payment.total_transaccion}
+                    </Text>
+                    {estadoPagoUnidad == 1 && (
+                        <Text style={{ color: '#4B5563', marginBottom: 2 }}>
+                            <Text style={{ fontWeight: 'bold' }}>Fecha de Pago: </Text>
+                            {formatDate(payment.fecha_transaccion)}
+                        </Text>
+                    )}
+                    {payment.descripcion_cantidad && (
+                        <Text style={{ color: '#4B5563', marginBottom: 2 }}>
+                            <Text style={{ fontWeight: 'bold' }}>Descripción: </Text>
+                            {payment.descripcion_contenido}
+                            {'\n'}
+                            {payment.descripcion_cantidad + ' ' + formatPlural(payment.descripcion_cantidad, unidadTransaccion[0], unidadTransaccion[1])}
+                        </Text>
+                    )}
+                    {estadoPagoUnidad == 0 && payment.id_tipo_transaccion !== TIPOS_TRANSACCION.RECARGA && (
+                        <TouchableOpacity
+                            style={{
+                                backgroundColor: '#19875422',
+                                borderRadius: 8,
+                                marginTop: 10,
+                                padding: 10,
+                                alignItems: 'center',
+                            }}
+                            onPress={() => handlePagar(payment)}
+                            activeOpacity={0.8}
+                        >
+                            <Text style={{ color: '#198754', fontWeight: 'bold' }}>Pagar</Text>
+                        </TouchableOpacity>
+                    )}
+                </View>
+            </TouchableOpacity>
+        );
+    };
 
     return (
-        <React.Fragment>
-            <LoadingModal visible={loading}></LoadingModal>
+        <>
+            <LoadingModal visible={loading} />
             <ButtonVolver to={backLocation} className="boton-volver" />
-            <ExitosoModal 
-                visible={showExitosoModal} 
-                mensaje='¡Pago con éxito!'  
-            />
-        <div className="payment-detail-container">
-
-            
-
-            <div className="detail-header">
-                <h2>Transacciones</h2>
-            </div>
-
-            <MesSelector mesSeleccionado={mesSeleccionado} handleMesSeleccionado={(mes) => handleMesSeleccionado(mes)} />
-
-
-            <div className="payments-container">
-
-            {registroTransacciones.map((payment, idx) => (
-
-                estadoPagoUnidad = payment.estado_transaccion,
-
-                unidadTransaccion = payment.id_tipo_transaccion == TIPOS_TRANSACCION.MENSUALIDAD ? ['Mensualidad', 'Mensualidades'] : 
-                                    payment.id_tipo_transaccion == TIPOS_TRANSACCION.RESERVACION ? ['Hora Reservada', 'Horas Reservadas'] : 
-                                    payment.id_tipo_transaccion == TIPOS_TRANSACCION.COMPRA_COMERCIO ? ['Producto', 'Productos'] : 
-                                    payment.id_tipo_transaccion == TIPOS_TRANSACCION.SERVICIO ? ['Hora Reservada', 'Horas Reservadas'] : ['Unidad', 'Unidades'],
-
-                <div className={`detail-card ${estadoPagoUnidad ? 'pago' : 'pendiente'}`} key={idx}
-                    onClick={() => handleHistoryItemClick(payment.id_billetera_transaccion)}
-                >
-                    <div className={`payment-header ${estadoPagoUnidad ? 'pago' : 'pendiente'}`}>
-                        <h3 className='payment-title'>{payment.tipo_transaccion}</h3>
-                    </div>
-                    <div className="payment-details">
-                        <p className='payment-date'><strong>Fecha: </strong> {formatDate(payment.fecha_generacion)}</p>
-                        <p className='payment-amount'><strong>Monto: </strong> ${payment.total_transaccion}</p>
-
-                        {/* La hora y referencia solo se muestran si ya está pagado */}
-                        {
-                        estadoPagoUnidad == 1 && (
-                            <>
-                                <p><strong>Fecha de Pago:</strong> {formatDate(payment.fecha_transaccion)}</p>
-                                {/* <p><strong>Referencia:</strong> {payment.reference}</p> */}
-                            </>
-                        )}
-
-                        {
-                            payment.descripcion_cantidad && (
-                                <p>
-                                    <strong>Descripción: </strong> 
-                                <br></br>
-                                {payment.descripcion_contenido} 
-                                <br></br>
-                                {
-                                    payment.descripcion_cantidad + ' ' +
-                                    formatPlural(payment.descripcion_cantidad, 
-                                        unidadTransaccion[0], 
-                                        unidadTransaccion[1] )
-                                    }
-                                </p>
-                            )
-                        }
-
-                
- 
-
-                {/* Mostrar el botón "Reportar Pago" solo si el estado es 'pendiente' */}
-                {estadoPagoUnidad == 0 && payment.id_tipo_transaccion !== TIPOS_TRANSACCION.RECARGA && (
-                    <Button
-                        className='primary'
-                        onClick={(e) => {
-                            e.stopPropagation(); // Detiene la propagación del evento
-                            handlePagar(payment)}
-                        }
-                    >
-                        Pagar
-                    </Button>
-                    
-                ) }
-
-                </div>
-            </div>)
-            )}
-
-                {registroTransacciones.length === 0 && (
-                <div className="no-payments-container">
-                    <p className="no-payments-message">No hay pagos registrados.</p>
-                    
-                </div>
-                )
-                }
-
-            </div>
-            {/* Si no hay pagos, mostrar un mensaje */}
-            
-        </div>
-        </React.Fragment>
+            <ExitosoModal visible={showExitosoModal} mensaje="¡Pago con éxito!" />
+            <View style={{ flex: 1, backgroundColor: '#f9fafb', padding: 16 }}>
+                <View style={{ marginBottom: 16 }}>
+                    <Text style={{ fontSize: 22, fontWeight: 'bold', textAlign: 'center' }}>Transacciones</Text>
+                </View>
+                <MesSelector mesSeleccionado={mesSeleccionado} handleMesSeleccionado={handleMesSeleccionado} />
+                <FlatList
+                    data={registroTransacciones}
+                    keyExtractor={(_, idx) => idx.toString()}
+                    renderItem={renderPayment}
+                    ListEmptyComponent={
+                        <View style={styles.noPaymentsContainer}>
+                            <Text style={styles.noPaymentsMessage}>No hay pagos registrados.</Text>
+                        </View>
+                    }
+                    contentContainerStyle={{ paddingBottom: 32 }}
+                />
+            </View>
+        </>
     );
 };
 

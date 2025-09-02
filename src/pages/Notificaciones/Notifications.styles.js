@@ -1,6 +1,6 @@
 // Adaptación de Notifications.css a React Native StyleSheet
 import { StyleSheet } from 'react-native';
-import { light, dark } from './VariablesBase.styles';
+import { light, dark } from '../../css/VariablesBase.styles';
 
 // Puedes cambiar light por dark para modo oscuro
 const VARS = light;

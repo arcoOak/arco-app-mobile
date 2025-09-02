@@ -1,9 +1,10 @@
-import React, {useState, useEffect} from 'react';
-import './ServicioReservaModal.css';
 
-import {useAuth } from '../../context/AuthContext'; // Importa el contexto de autenticación
+import React, { useState, useEffect } from 'react';
+import { Modal, View, Text, ScrollView, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
+import { useAuth } from '../../context/AuthContext';
+import Button from '../../../components/buttons/Button';
+import ServicioReservaModalStyles from './ServicioReservaModal.styles';
 
-import Button from '../../../components/buttons/Button'; // Importa el botón de confirmar
 
 export default function ConfirmacionReservaModal({
     visible,
@@ -17,20 +18,8 @@ export default function ConfirmacionReservaModal({
     nota,
     setNota,
 }) {
-    if (!visible) {
-        return null;
-    }
-
-    const { user } = useAuth(); // Obtiene el usuario autenticado desde el contexto
+    const { user } = useAuth();
     const [loading, setLoading] = useState(false);
-
-    
-
-    useEffect(() => {
-
-
-    }, []);
-
 
     const formatearFecha = (fecha) => {
         return new Date(fecha).toLocaleDateString('es-ES', {
@@ -45,109 +34,105 @@ export default function ConfirmacionReservaModal({
         if (!horarios || horarios.length === 0) {
             return [];
         }
-
-        // Sort the array to ensure consecutive hours are next to each other
         const sortedHorarios = [...horarios].sort((a, b) => a - b);
         const result = [];
         let startHour = parseInt(sortedHorarios[0]);
         let endHour = parseInt(sortedHorarios[0]);
-
         for (let i = 0; i < sortedHorarios.length; i++) {
             const currentHour = parseInt(sortedHorarios[i]);
             const nextHour = parseInt(sortedHorarios[i + 1]);
-
             if (currentHour + 1 === nextHour) {
-            // If the next hour is consecutive, extend the current range
-            endHour = nextHour;
-            } else {
-            // If not consecutive, or if it's the last hour,
-            // finalize the current range and add it to the result
-            let formattedStart = `${startHour.toString().padStart(2, '0')}:00`;
-            let formattedEnd = `${(endHour + 1).toString().padStart(2, '0')}:00`;
-
-            // Handle the case where 23:00 - 00:00 should be 23:00 - 24:00 (or similar)
-            if (endHour === 23) {
-                formattedEnd = '00:00'; // For 23:00 to 00:00 (next day)
-            }
-
-            result.push(`${formattedStart} - ${formattedEnd}`);
-
-            // Reset start and end for the next potential range
-            if (nextHour !== undefined) {
-                startHour = nextHour;
                 endHour = nextHour;
-            }
+            } else {
+                let formattedStart = `${startHour.toString().padStart(2, '0')}:00`;
+                let formattedEnd = `${(endHour + 1).toString().padStart(2, '0')}:00`;
+                if (endHour === 23) {
+                    formattedEnd = '00:00';
+                }
+                result.push(`${formattedStart} - ${formattedEnd}`);
+                if (nextHour !== undefined) {
+                    startHour = nextHour;
+                    endHour = nextHour;
+                }
             }
         }
         return result;
-        };
-    
-    //console.log( 'formatearHorarios', formatearHorarios(horarios) );
-
-    
+    };
 
     return (
-        <React.Fragment>
-        <div className="modal-overlay">
-            <div className="modal-content">
-
-                <h2 className='reserva-modal__title'>Confirmar Servicio</h2>
-
-                <div className='modal-content-block'>
-
-                <div className='reserva-modal__info'>
-                    <p className='reserva-modal__text'><strong>Servicio:</strong> {servicio?.nombre_servicio_reservable}</p>
-                
-                    {empresaSeleccionada && <p className='reserva-modal__text'><strong>Empresa:</strong> {empresaSeleccionada.nombre_comercio}</p>}
-                </div>
-
-                <div className='reserva-modal__info'>
-                    <p className='reserva-modal__text'><strong>Fecha:</strong> {formatearFecha(fecha)}</p>
-
-                    <p className='reserva-modal__text'><strong>Horarios:</strong></p>
-                    <ul className='reserva-modal__horarios'>
-                        {formatearHorarios(horarios).map((horario, index) => (
-                            <li key={index}>{horario}</li>
-                        ))}
-                    </ul>
-                </div>
-
-                <div className='reserva-modal__info'>
-                    <p className='reserva-modal__text'><strong>Coste Total:</strong> ${costeTotal}</p>
-                </div>
-
-                <div className="form-group">
-                    <label htmlFor="nota">Añadir una nota (opcional)</label>
-                    <textarea
-                        id="nota"
-                        value={nota}
-                        className='reserva-modal__textarea'
-                        onChange={(e) => setNota(e.target.value)}
-                        rows="3"
-                        placeholder="Instrucciones especiales, etc."
-                    />
-                </div>
-
-                </div>
-
-                <div className="modal-actions">
-
-                    <Button
-                        className='primary'
-                        onClick={onConfirm}
-                        disabled={loading}
-                    >
-                    
-                        {loading ? 'Procesando...' : 'Confirmar'}
-                    </Button>
-                    <Button onClick={onClose} className="neutral" disabled={loading}>
-                        Cancelar
-                    </Button>
-
-                </div>
-            </div>
-        </div>
-        </React.Fragment>
+        <Modal
+            visible={visible}
+            transparent
+            animationType="fade"
+            onRequestClose={onClose}
+        >
+            <View style={{ flex: 1, backgroundColor: 'rgba(0,0,0,0.5)', justifyContent: 'center', alignItems: 'center' }}>
+                <View style={{ backgroundColor: '#fff', borderRadius: 12, padding: 20, width: '90%' }}>
+                    <Text style={ServicioReservaModalStyles.title}>Confirmar Servicio</Text>
+                    <ScrollView contentContainerStyle={{ paddingBottom: 16 }}>
+                        <View style={ServicioReservaModalStyles.info}>
+                            <Text style={ServicioReservaModalStyles.text}>
+                                <Text style={{ fontWeight: 'bold' }}>Servicio: </Text>
+                                {servicio?.nombre_servicio_reservable}
+                            </Text>
+                            {empresaSeleccionada && (
+                                <Text style={ServicioReservaModalStyles.text}>
+                                    <Text style={{ fontWeight: 'bold' }}>Empresa: </Text>
+                                    {empresaSeleccionada.nombre_comercio}
+                                </Text>
+                            )}
+                        </View>
+                        <View style={ServicioReservaModalStyles.info}>
+                            <Text style={ServicioReservaModalStyles.text}>
+                                <Text style={{ fontWeight: 'bold' }}>Fecha: </Text>
+                                {formatearFecha(fecha)}
+                            </Text>
+                            <Text style={ServicioReservaModalStyles.text}>
+                                <Text style={{ fontWeight: 'bold' }}>Horarios: </Text>
+                            </Text>
+                            <View style={ServicioReservaModalStyles.horarios}>
+                                {formatearHorarios(horarios).map((horario, index) => (
+                                    <Text key={index} style={ServicioReservaModalStyles.horarioItem}>{horario}</Text>
+                                ))}
+                            </View>
+                        </View>
+                        <View style={ServicioReservaModalStyles.info}>
+                            <Text style={ServicioReservaModalStyles.text}>
+                                <Text style={{ fontWeight: 'bold' }}>Coste Total: </Text>${costeTotal}
+                            </Text>
+                        </View>
+                        <View style={{ marginBottom: 16 }}>
+                            <Text style={{ marginBottom: 4 }}>Añadir una nota (opcional)</Text>
+                            <TextInput
+                                value={nota}
+                                style={ServicioReservaModalStyles.textarea}
+                                onChangeText={setNota}
+                                multiline
+                                numberOfLines={3}
+                                placeholder="Instrucciones especiales, etc."
+                                textAlignVertical="top"
+                            />
+                        </View>
+                    </ScrollView>
+                    <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginTop: 8 }}>
+                        <Button
+                            style={{ flex: 1, marginRight: 8 }}
+                            onPress={onConfirm}
+                            disabled={loading}
+                        >
+                            {loading ? 'Procesando...' : 'Confirmar'}
+                        </Button>
+                        <Button
+                            style={{ flex: 1 }}
+                            onPress={onClose}
+                            disabled={loading}
+                        >
+                            Cancelar
+                        </Button>
+                    </View>
+                </View>
+            </View>
+        </Modal>
     );
 }
 

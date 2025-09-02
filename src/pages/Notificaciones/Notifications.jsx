@@ -1,32 +1,50 @@
-import '../css/notifications.css'
+import React from 'react';
+import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import Icon from 'react-native-vector-icons/FontAwesome5';
+import styles from './Notifications.styles';
+
 export default function Notifications() {
     return (
-        <>
-            <div className="notifaction-container">
-
-                <div>
-                    <div className="notification-header">
-                        <h2>Enterate sobre asuntos importantes</h2>
-                        <h3>Te notificaremos cuando</h3>
-                    </div>
-
-                    <div className="notification-contain">
-                        <div className="notification-item"><i class="fa fa-calendar-day"></i> Tu pago esté próximo a vencer</div>
-                        <div className="notification-item"><i class="fa fa-credit-card"></i> Hagas una compra</div>
-                        <div className="notification-item"><i class="fa fa-gift"></i> Tengas recompensas</div>
-                        <div className="notification-item"><i class="fa fa-user"></i> Acceda cualquier miembro</div>
-                        <div className="notification-item"><i class="fa fa-bacon"></i> Una Orden de comida esté lista</div>
-                    </div>
-                </div>
-
-                <div className="notification-settings">
-                    <p>Puedes ajustar esta configuración en otro momento</p>
-                    <div>
-                        <button>Luego</button>
-                        <button>Permitir</button>
-                    </div>
-                </div>
-            </div>
-        </>
-    )
+        <View style={styles.notificationContainer}>
+            <View>
+                <View style={styles.notificationHeader}>
+                    <Text style={[styles.notificationHeaderTitle, { fontSize: 22, fontWeight: 'bold' }]}>Enterate sobre asuntos importantes</Text>
+                    <Text style={{ fontSize: 16, color: '#666' }}>Te notificaremos cuando</Text>
+                </View>
+                <View style={styles.notificationContain}>
+                    <View style={styles.notificationItem}>
+                        <Icon name="calendar-day" size={20} color="#6c63ff" style={styles.notificationItemIcon} />
+                        <Text>Tu pago esté próximo a vencer</Text>
+                    </View>
+                    <View style={styles.notificationItem}>
+                        <Icon name="credit-card" size={20} color="#6c63ff" style={styles.notificationItemIcon} />
+                        <Text>Hagas una compra</Text>
+                    </View>
+                    <View style={styles.notificationItem}>
+                        <Icon name="gift" size={20} color="#6c63ff" style={styles.notificationItemIcon} />
+                        <Text>Tengas recompensas</Text>
+                    </View>
+                    <View style={styles.notificationItem}>
+                        <Icon name="user" size={20} color="#6c63ff" style={styles.notificationItemIcon} />
+                        <Text>Acceda cualquier miembro</Text>
+                    </View>
+                    <View style={styles.notificationItem}>
+                        <Icon name="bacon" size={20} color="#6c63ff" style={styles.notificationItemIcon} />
+                        <Text>Una Orden de comida esté lista</Text>
+                    </View>
+                </View>
+            </View>
+            <View style={styles.notificationSettings}>
+                <Text style={{ marginBottom: 12 }}>Puedes ajustar esta configuración en otro momento</Text>
+                <View style={styles.notificationSettingsRow}>
+                    <TouchableOpacity style={[styles.notificationSettingsButton, styles.notificationSettingsButtonGray]}>
+                        <Text style={{ color: '#fff', textAlign: 'center', padding: 10 }}>Luego</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity style={[styles.notificationSettingsButton, styles.notificationSettingsButtonBlue]}>
+                        <Text style={{ color: '#fff', textAlign: 'center', padding: 10 }}>Permitir</Text>
+                    </TouchableOpacity>
+                </View>
+            </View>
+        </View>
+    );
 }

@@ -1,13 +1,12 @@
 // src/Navbar.jsx
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from "react-router-dom"; // Importa useNavigate para la navegación
-// Assuming you've moved the CSS into Navbar.css
-import './Navbar.css'; // Make sure this path is correct relative to Navbar.jsx
-
-import logo from '../img/logo.png'; // Importa tu logo
-import logoDark from '../img/logo-dark.png'; // Importa tu logo oscuro
-
-import {useAuth } from '../context/AuthContext'; // Importa el contexto de autenticación
+import { View, Text, TouchableOpacity, Image, TextInput, ScrollView, StyleSheet } from 'react-native';
+import Icon from 'react-native-vector-icons/MaterialIcons';
+import { useNavigation } from '@react-navigation/native';
+import logo from '../img/logo.png';
+import logoDark from '../img/logo-dark.png';
+import { useAuth } from '../context/AuthContext';
+import NavbarStyles from './Navbar.styles';
 
 // Es una buena práctica definir constantes que no dependen del estado o props fuera del componente.
 // Esto evita que se recreen en cada renderizado.
@@ -31,141 +30,98 @@ const menuItems = [
 
 
 
+
 const Navbar = () => {
+    const navigation = useNavigation();
+    const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(true);
+    const [activeMenuItem, setActiveMenuItem] = useState('Inicio');
+    const { isDarkTheme, toggleTheme } = useAuth();
 
-    const navigate = useNavigate(); // Hook para navegar programáticamente
-    const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(true); // Start collapsed based on your HTML
-
-    const [activeMenuItem, setActiveMenuItem] = useState('Inicio'); // State for active menu item
-
-    const { isDarkTheme, toggleTheme, logo } = useAuth();
-
-   
-
-    // Function to toggle sidebar
     const toggleSidebar = () => {
         setIsSidebarCollapsed(prevState => !prevState);
     };
 
-    // Function to update theme icon based on sidebar state and theme
-    const getThemeIcon = () => {
-        return isDarkTheme ? 'light_mode' : 'dark_mode'; 
-    };
+    const getThemeIcon = () => (isDarkTheme ? 'light-mode' : 'dark-mode');
 
-    // Effect to handle sidebar collapse on window resize (optional, but good for responsiveness)
-    useEffect(() => {
-        const handleResize = () => {
-            if (window.innerWidth > 768) {
-                setIsSidebarCollapsed(false);
-            } else { 
-                setIsSidebarCollapsed(true);
-            } 
-        };
-
-        window.addEventListener('resize', handleResize);
-        return () => {
-            window.removeEventListener('resize', handleResize);
-        };
-    }, []);
-
-    const handleSeleccionarBoton = (e, item) => {
-        e.preventDefault(); // Prevenir el comportamiento por defecto de la etiqueta <a>
+    const handleSeleccionarBoton = (item) => {
         setActiveMenuItem(item.name);
-        navigate(item.path);
-
-        // En pantallas pequeñas, el sidebar es un overlay, así que lo cerramos tras la selección.
-        if (window.innerWidth <= 768) {
-            toggleSidebar();
-        }
+        navigation.navigate(item.path);
+        setIsSidebarCollapsed(true);
     };
-
 
     return (
-        <>
-
-            <div className="titleHome">
-                <div className="titleHomeSide">
-                    <button className="sidebar-toggle" onClick={toggleSidebar}>
-                        <i className='fa fa-solid fa-bars'></i>
-                    </button>
-                </div>
-            </div>
-
-
+        <View>
+            <View style={NavbarStyles.titleHome}>
+                <View style={NavbarStyles.titleHomeSide}>
+                    <TouchableOpacity style={NavbarStyles.sidebarToggle} onPress={toggleSidebar}>
+                        <Icon name="menu" size={28} color="#1976d2" />
+                    </TouchableOpacity>
+                </View>
+            </View>
             {/* Sidebar */}
-            <aside className={`sidebar ${isSidebarCollapsed ? 'collapsed' : ''}`}>
-                <div className="sidebar-header">
-                    {/* Make sure 'logo.png' is in your public folder or imported correctly */}
-                    <img src={logo} alt="Logo de Arco App" className="header-logo" />
-                    <button className="sidebar-toggle" onClick={toggleSidebar}>
-                        <span className="material-symbols-rounded">close</span>
-                    </button>
-                </div>
-
-                <div className="sidebar-content">
+            { !isSidebarCollapsed && (
+            <View style={[NavbarStyles.sidebar, isSidebarCollapsed && NavbarStyles.sidebarCollapsed]}>
+                <View style={NavbarStyles.sidebarHeader}>
+                    <Image source={logo} style={NavbarStyles.headerLogo} />
+                    <TouchableOpacity style={NavbarStyles.sidebarToggle} onPress={toggleSidebar}>
+                        <Icon name="close" size={28} color="#1976d2" />
+                    </TouchableOpacity>
+                </View>
+                <ScrollView style={NavbarStyles.sidebarContent}>
                     {/* Search Form */}
-                    <form action="#" className="search-form" onClick={() => {
-                        if (isSidebarCollapsed) {
-                            setIsSidebarCollapsed(false);
-                            // You might need a ref here to focus the input directly in React
-                            // For now, it will just expand.
-                        }
-                    }}>
-                        <span className="material-symbols-rounded">search</span>
-                        <input type="search" placeholder="Buscar..." required />
-                    </form>
-
-
+                    <View style={NavbarStyles.searchForm}>
+                        <Icon name="search" size={22} color="#888" />
+                        <TextInput
+                            style={NavbarStyles.searchInput}
+                            placeholder="Buscar..."
+                            placeholderTextColor="#888"
+                        />
+                    </View>
                     {/* Own Sidebar Menu */}
-
-                    <ul className='menu-list'>
-                    {ownItems.map((item) => (
-                        <li className="menu-item own" key={item.name}>
-                            <a
-                                href="#"
-                                className={`menu-link ${activeMenuItem === item.name ? 'active' : ''}`}
-                                onClick={(e) => handleSeleccionarBoton(e, item)}
+                    <View style={NavbarStyles.menuList}>
+                        {ownItems.map((item) => (
+                            <TouchableOpacity
+                                key={item.name}
+                                style={[NavbarStyles.menuLink, activeMenuItem === item.name && NavbarStyles.menuLinkActive]}
+                                onPress={() => handleSeleccionarBoton(item)}
+                                activeOpacity={0.85}
                             >
-                                <span className="material-symbols-rounded">{item.icon}</span>
-                                <span className="menu-label">{item.name}</span>
-                            </a>
-                        </li>
-                    ))}
-                    </ul>
-
-                    <hr />
-
-                    {/* Sidebar Menu */}
-                    <ul className="menu-list">
-                        {menuItems.map((item) => (
-                            <li className="menu-item" key={item.name}>
-                                <a
-                                    href="#"
-                                    className={`menu-link ${activeMenuItem === item.name ? 'active' : ''}`}
-                                    onClick={(e) => handleSeleccionarBoton(e, item)}
-                                >
-                                    <span className="material-symbols-rounded">{item.icon}</span>
-                                    <span className="menu-label">{item.name}</span>
-                                </a>
-                            </li>
+                                <Icon name={item.icon} size={22} color={activeMenuItem === item.name ? '#fff' : '#1976d2'} />
+                                <Text style={NavbarStyles.menuLabel}>{item.name}</Text>
+                            </TouchableOpacity>
                         ))}
-                    </ul>
-                </div>
-
+                    </View>
+                    <View style={{ height: 1, backgroundColor: '#e0e0e0', marginVertical: 12 }} />
+                    {/* Sidebar Menu */}
+                    <View style={NavbarStyles.menuList}>
+                        {menuItems.map((item) => (
+                            <TouchableOpacity
+                                key={item.name}
+                                style={[NavbarStyles.menuLink, activeMenuItem === item.name && NavbarStyles.menuLinkActive]}
+                                onPress={() => handleSeleccionarBoton(item)}
+                                activeOpacity={0.85}
+                            >
+                                <Icon name={item.icon} size={22} color={activeMenuItem === item.name ? '#fff' : '#1976d2'} />
+                                <Text style={NavbarStyles.menuLabel}>{item.name}</Text>
+                            </TouchableOpacity>
+                        ))}
+                    </View>
+                </ScrollView>
                 {/* Sidebar Footer */}
-                <div className="sidebar-footer">
-                    <button className="theme-toggle" onClick={toggleTheme}>
-                        <div className="theme-label">
-                            <span className="theme-icon material-symbols-rounded">{getThemeIcon()}</span>
-                            <span className="theme-text">Modo Oscuro</span>
-                        </div>
-                        <div className="theme-toggle-track">
-                            <div className="theme-toggle-indicator"></div>
-                        </div>
-                    </button>
-                </div>
-            </aside>
-        </>
+                <View style={NavbarStyles.sidebarFooter}>
+                    <TouchableOpacity style={NavbarStyles.themeToggle} onPress={toggleTheme} activeOpacity={0.85}>
+                        <View style={NavbarStyles.themeLabel}>
+                            <Icon name={getThemeIcon()} size={22} color="#1976d2" />
+                            <Text style={NavbarStyles.themeText}>Modo Oscuro</Text>
+                        </View>
+                        <View style={NavbarStyles.themeToggleTrack}>
+                            <View style={NavbarStyles.themeToggleIndicator} />
+                        </View>
+                    </TouchableOpacity>
+                </View>
+            </View>
+            )}
+        </View>
     );
 };
 

@@ -1,40 +1,28 @@
-import React, { useState, useRef, useEffect, useMemo } from 'react';
-import { useNavigate } from 'react-router-dom';
-import './Reservas.css'; // Asegúrate de importar tu CSS principal
 
-import { useAuth } from '../../context/AuthContext'; // Importa el contexto de autenticación}
-
+import React, { useState, useEffect } from 'react';
+import { View, Text, ScrollView, TouchableOpacity } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
+import { useAuth } from '../../context/AuthContext';
 import LoadingModal from '../../../components/modals/LoadingModal';
-
 import reservasService from '../../services/reservas.service';
+import MesSelector from '../../../components/MesSelector';
+import ReservasStyles from './Reservas.styles';
 
-import MesSelector from '../../../components/MesSelector'; // Importa el componente MesSelector
 
 export default function Reservas() {
-    const navigate = useNavigate();
-
-    const { user } = useAuth(); // Obtén el usuario autenticado del contexto
-
+    const navigation = useNavigation();
+    const { user } = useAuth();
     const [loading, setLoading] = useState(false);
-
-    const [mesSeleccionado, setMesSeleccionado] = useState(new Date().getMonth() + 1); // Estado para el mes seleccionado
-
-    //Datos a Cargar
-
+    const [mesSeleccionado, setMesSeleccionado] = useState(new Date().getMonth() + 1);
     const [listaReservas, setListaReservas] = useState([]);
 
-    // Drag to scroll hook
-
-  
     useEffect(() => {
         const fetchData = async () => {
             setLoading(true);
-            try{
-                const mesActual = new Date().getMonth() + 1; // Obtener el mes actual (1-12)
-                const reservas = await reservasService.getReservaByUsuarioMes(user.id_socio, mesActual )
-                console.log('Reservas obtenidas:', reservas);
+            try {
+                const mesActual = new Date().getMonth() + 1;
+                const reservas = await reservasService.getReservaByUsuarioMes(user.id_socio, mesActual);
                 setListaReservas(reservas);
-
             } catch (error) {
                 console.error('Error al cargar los datos:', error);
             } finally {
@@ -44,18 +32,12 @@ export default function Reservas() {
         fetchData();
     }, []);
 
-
-
-    
-
     const handleMesSeleccionado = (mes) => {
         setMesSeleccionado(mes);
-
         const fetchReservas = async () => {
             setLoading(true);
             try {
                 const reservas = await reservasService.getReservaByUsuarioMes(user.id_socio, mes);
-                console.log('Reservas obtenidas para el mes seleccionado:', reservas);
                 setListaReservas(reservas);
             } catch (error) {
                 console.error('Error al cargar las reservas del mes seleccionado:', error);
@@ -63,48 +45,45 @@ export default function Reservas() {
                 setLoading(false);
             }
         };
-
         fetchReservas();
-
-    }
-
+    };
 
     return (
-        <React.Fragment>
-        <LoadingModal visible={loading} />
-        <div className="reservas-container">
-            <h2 className='reservas-title' >Reservas</h2>
-
-            <MesSelector
-                mesSeleccionado={mesSeleccionado}
-                handleMesSeleccionado={(mes) => handleMesSeleccionado(mes)}
-            />
-
-
-            <div className="reservas-list" >
-                <div className="reservas-list-inner">
-                    
-                    {listaReservas.length > 0 ? (
-                        listaReservas.map((reserva) => (
-                            <div onClick={() => navigate(`/reservas/${reserva.id_reservacion}`)} className="reserva-item" key={reserva.id_reservacion}>
-                                <div className="reserva-item-header">
-                                    <h3 className="reserva-item-title">{reserva.nombre_espacio_reservable}</h3>
-                                    <span className="reserva-item-date">{reserva.nombre_unidad}</span>
-                                </div>
-                                <div className="reserva-item-details">
-                                    <p className="reserva-item-date">Fecha: {new Date(reserva.fecha_reservacion).toLocaleDateString()}</p>
-                                </div>
-                            </div>
-                        ))
-                    ) : (
-                        <div className="no-reservas">
-                            <p>No tienes reservas activas para esta fecha.</p>
-                        </div>
-                    )}
-
-                </div>
-            </div>
-        </div >
-        </React.Fragment>
+        <ScrollView>
+            <LoadingModal visible={loading} />
+            <View style={ReservasStyles.container}>
+                <Text style={ReservasStyles.title}>Reservas</Text>
+                <MesSelector
+                    mesSeleccionado={mesSeleccionado}
+                    handleMesSeleccionado={handleMesSeleccionado}
+                />
+                <View style={ReservasStyles.list}>
+                    <View style={ReservasStyles.listInner}>
+                        {listaReservas.length > 0 ? (
+                            listaReservas.map((reserva) => (
+                                <TouchableOpacity
+                                    onPress={() => navigation.navigate('ReservasDetalle', { id: reserva.id_reservacion })}
+                                    style={ReservasStyles.item}
+                                    key={reserva.id_reservacion}
+                                    activeOpacity={0.85}
+                                >
+                                    <View style={ReservasStyles.itemHeader}>
+                                        <Text style={ReservasStyles.itemTitle}>{reserva.nombre_espacio_reservable}</Text>
+                                        <Text style={ReservasStyles.itemDate}>{reserva.nombre_unidad}</Text>
+                                    </View>
+                                    <View style={ReservasStyles.itemDetails}>
+                                        <Text style={ReservasStyles.itemDate}>Fecha: {new Date(reserva.fecha_reservacion).toLocaleDateString()}</Text>
+                                    </View>
+                                </TouchableOpacity>
+                            ))
+                        ) : (
+                            <View style={ReservasStyles.noReservas}>
+                                <Text style={ReservasStyles.noReservasText}>No tienes reservas activas para esta fecha.</Text>
+                            </View>
+                        )}
+                    </View>
+                </View>
+            </View>
+        </ScrollView>
     );
 }

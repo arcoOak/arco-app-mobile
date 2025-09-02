@@ -5,41 +5,34 @@ Cambio de contraseña en perfil de usuario
 
 */ 
 
-import React, { useState, useRef, useEffect, useMemo } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
-import './MisComprasDetalle.css'; 
 
+import React, { useState, useEffect } from 'react';
+import { View, Text, ScrollView, TouchableOpacity } from 'react-native';
+import { useRoute, useNavigation } from '@react-navigation/native';
 import { useAuth } from '../../context/AuthContext';
-
 import LoadingModal from '../../components/modals/LoadingModal';
-
 import compraService from '../../services/compra.service';
-
 import BotonVolver from '../../components/buttons/ButtonVolver';
+import styles from './MisComprasDetalle.styles';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+
 
 
 
 export default function MisComprasDetalle() {
-    const navigate = useNavigate();
-
-    const { user } = useAuth(); 
-    const { id } = useParams();
+    const navigation = useNavigation();
+    const route = useRoute();
+    const { user } = useAuth();
+    const { id } = route.params || {};
     const [loading, setLoading] = useState(false);
-
-    //Datos a Cargar
-
     const [miCompraDetalle, setMiCompraDetalle] = useState(null);
-
     const [listaProductos, setListaProductos] = useState([]);
 
     useEffect(() => {
         const fetchData = async () => {
             setLoading(true);
-            try{
+            try {
                 const response = await compraService.getCompraById(id);
-
-                console.log('Compra obtenida:', response);
-
                 setMiCompraDetalle({
                     id: response.id,
                     fecha_compra: response.fecha_compra,
@@ -49,10 +42,7 @@ export default function MisComprasDetalle() {
                     id_comercio: response.id_comercio,
                     id_compra_comercio: response.id_compra_comercio,
                 });
-
-                setListaProductos(response.productos || []); // Asegúrate de que productos sea un array
-
-
+                setListaProductos(response.productos || []);
             } catch (error) {
                 console.error('Error al cargar los datos:', error);
             } finally {
@@ -62,68 +52,56 @@ export default function MisComprasDetalle() {
         fetchData();
     }, []);
 
-    const handleNavigate = (path, id) =>{
-        navigate(`/${path}/${id}`, { state: { returnTo: location.pathname } });
-    }
+    const handleNavigate = (path, id) => {
+        // navigation.navigate(path, { id, returnTo: route.name });
+    };
 
     return (
-        <React.Fragment>
-        <LoadingModal visible={loading} />
-
-        <BotonVolver to="/compras" />
-
-
-
-        <div className="compras-detalle-container">
-            <div className="compras-detalle-header">
-            <h1>Detalle de la Compra</h1>
+        <ScrollView contentContainerStyle={styles.container}>
+            <LoadingModal visible={loading} />
+            <BotonVolver to="Compras" />
+            <View style={styles.header}>
+                <Text style={styles.headerTitle}>Detalle de la Compra</Text>
+            </View>
             {miCompraDetalle ? (
-                <div className="compra-info">
-                    <div className='compra-info-header'>
-                        <h2>Información de la Compra</h2>
-                        <p><strong>Fecha Compra:</strong> {new Date(miCompraDetalle.fecha_compra).toLocaleDateString()}</p>
+                <View style={styles.compraInfo}>
+                    <View style={styles.compraInfoHeader}>
+                        <Text style={styles.sectionTitle}>Información de la Compra</Text>
+                        <Text><Text style={{ fontWeight: 'bold' }}>Fecha Compra:</Text> {new Date(miCompraDetalle.fecha_compra).toLocaleDateString()}</Text>
 
-                        <div className='info-card-link' onClick={() => handleNavigate('comercios', miCompraDetalle.id_comercio)}>
-                            <div className='info-card-link__text'>
-                                <span className='info-card-link__label'>Comercio</span>
-                                <span className='info-card-link__value'>{miCompraDetalle.nombre_comercio}</span>
-                            </div>
-                            <i className='bx bx-chevron-right info-card-link__icon'></i>
-                        </div>
+                        <TouchableOpacity style={styles.infoCardLink} onPress={() => handleNavigate('Comercios', miCompraDetalle.id_comercio)}>
+                            <View style={styles.infoCardLinkText}>
+                                <Text style={styles.infoCardLinkLabel}>Comercio</Text>
+                                <Text style={styles.infoCardLinkValue}>{miCompraDetalle.nombre_comercio}</Text>
+                            </View>
+                            <Icon name="chevron-right" size={24} style={styles.infoCardLinkIcon} />
+                        </TouchableOpacity>
 
-                        <div className='productos-comprados'>
-                        <h2>Productos Comprados</h2>
+                        <View style={styles.productosComprados}>
+                            <Text style={styles.sectionTitle}>Productos Comprados</Text>
                             {listaProductos.length > 0 ? (
-                                <ul className='productos-list'>
+                                <View style={styles.productosList}>
                                     {listaProductos.map((producto, index) => (
-                                        <li key={index}>
-                                            <span className='producto-nombre'>{producto.nombre_producto}</span>
-                                            <span className='producto-cantidad'> x {producto.cantidad}</span>
-                                            <span className='producto-precio'> ${producto.precio_producto.toFixed(2)}</span>
-                                        </li>
+                                        <View key={index} style={styles.productosListItem}>
+                                            <Text style={styles.productoNombre}>{producto.nombre_producto}</Text>
+                                            <Text style={styles.productoCantidad}>x {producto.cantidad}</Text>
+                                            <Text style={styles.productoPrecio}>${producto.precio_producto.toFixed(2)}</Text>
+                                        </View>
                                     ))}
-                                </ul>
+                                </View>
                             ) : (
-                                <p>No hay productos comprados para esta compra.</p>
+                                <Text style={styles.loadingText}>No hay productos comprados para esta compra.</Text>
                             )}
-                        </div>
+                        </View>
 
-                        {miCompraDetalle.nota &&
-                            <p><strong>Información Adicional:</strong> <br/> {miCompraDetalle.nota}</p>
-                        }
-                    </div>
-
-                </div>
-            
-                
+                        {miCompraDetalle.nota ? (
+                            <Text><Text style={{ fontWeight: 'bold' }}>Información Adicional:</Text> {miCompraDetalle.nota}</Text>
+                        ) : null}
+                    </View>
+                </View>
             ) : (
-                <p className='loading-text'>Cargando detalles de la compra...</p>
+                <Text style={styles.loadingText}>Cargando detalles de la compra...</Text>
             )}
-            </div>
-
-        </div>
-        
-        
-        </React.Fragment>
+        </ScrollView>
     );
 }
