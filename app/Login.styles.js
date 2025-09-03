@@ -13,9 +13,9 @@ const styles = StyleSheet.create({
     width: '100%',
   },
   appLogoHeaderImg: {
-    maxWidth: 250,
-    height: 'auto',
-    // No filter en RN, usar shadow si es necesario
+    width: 250,
+    height: 80,
+    resizeMode: 'contain',
   },
   loginContainer: {
     backgroundColor: VARS.colorWhite,
@@ -30,22 +30,21 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
     width: '90%',
     alignSelf: 'center',
-    maxWidth: 950,
-    minHeight: 550,
-    flexDirection: 'row',
+    flexDirection: 'column',
   },
   loginImage: {
-    flex: 1,
-    // backgroundImage: require('../src/img/bg-pool3.jpg'), // Usar ImageBackground en el componente
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: VARS.spacingLg,
+    width: '100%',
+    height: 180,
+    borderTopLeftRadius: VARS.borderRadiusLg,
+    borderTopRightRadius: VARS.borderRadiusLg,
+    marginBottom: VARS.spacingMd,
   },
   loginFormArea: {
     flex: 1,
-    paddingVertical: VARS.spacingXl,
-    paddingHorizontal: VARS.spacingXxl,
+    paddingVertical: VARS.spacingMd,
+    paddingHorizontal: VARS.spacingXl,
     justifyContent: 'center',
+    gap: VARS.spacingSm,
   },
   loginFormTitle: {
     fontSize: VARS.fontSizeXxl,
@@ -85,7 +84,7 @@ const styles = StyleSheet.create({
   },
   loginButton: {
     width: '100%',
-    padding: VARS.spacingMd,
+    padding: VARS.spacingXs,
     backgroundColor: VARS.colorBrandPrimary,
     color: VARS.colorTextButtonPrimary,
     borderWidth: 0,
@@ -99,7 +98,36 @@ const styles = StyleSheet.create({
     elevation: 4,
     marginTop: VARS.spacingMd,
   },
-  // ...agrega más estilos según necesidad para los campos y enlaces
+  inputGroup: {
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'flex-start',
+    width: '100%',
+    gap: VARS.spacingSm,
+  },
+  input:{
+    width: '80%',
+    backgroundColor: VARS.colorSurfaceSecondary,
+    paddingBlock: VARS.spacingSm,
+    paddingHorizontal: VARS.spacingMd,
+    borderRadius: VARS.borderRadiusMd,
+    borderWidth: 1,
+    borderColor: VARS.colorBorderPrimary,
+  },
+
+
+  loginButtonText: {
+    width: '100%',
+    color: '#fff',
+    borderRadius: VARS.borderRadiusMd,
+    fontSize: VARS.fontSizeLg,
+    fontWeight: VARS.fontWeightBold,
+    textAlign: 'center',
+    paddingVertical: VARS.spacingSm,
+  },
+  
+  
 });
 
 export default styles;

@@ -12,19 +12,26 @@ import ServicioSection from '../components/ServicioSection';
 import PromotionCard from '../components/PromotionCard';
 import ClimaHome from '../components/ClimaHome';
 import HorarioHome from '../components/HorarioHome';
-import RedesSocialesHome from '../components/RedesSocialesHome';
-import HomeComponentsStyles from '../src/css/HomeComponents.styles';
-import HomeCarouselStyles from '../src/css/HomeCarousel.styles';
 
-export default function App() {
+import HomeStyles from '../src/css/Home.styles';
+import RedesSocialesHome from '../components/RedesSocialesHome';
+
+export default function Home() {
     const { user, clubInfo } = useAuth();
+    if (!user) {
+        return (
+            <View style={HomeStyles.app}>
+                <Text>Cargando usuario...</Text>
+            </View>
+        );
+    }
     return (
-        <ScrollView style={{ flex: 1, backgroundColor: '#f7f7f7' }} contentContainerStyle={{ paddingBottom: 32 }}>
-            <View style={{ ...HomeCarouselStyles.header, marginTop: 16 }}>
-                <View style={{ flex: 1 }}>
-                    <Text style={HomeComponentsStyles.welcomeText}>Bienvenido,</Text>
-                    <Text style={HomeComponentsStyles.userName}>{user.nombre + ' ' + user.apellido}</Text>
-                </View>
+        <ScrollView style={HomeStyles.app} contentContainerStyle={{ paddingBottom: 32 }}>
+            <View style={HomeStyles.appHeader}>
+                
+                    <Text style={HomeStyles.homeBienvenidaText}>Bienvenido,</Text>
+                    <Text style={HomeStyles.username}>{(user?.nombre || '') + ' ' + (user?.apellido || '')}</Text>
+                
             </View>
             <TarjetaPendientes />
             <TarjetaSaldo />

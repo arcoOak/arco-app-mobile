@@ -7,25 +7,17 @@ const VARS = light;
 
 const styles = StyleSheet.create({
   app: {
-    paddingBottom: 60,
-    maxWidth: 500,
+    paddingBlock: VARS.spacingLg,
+    width: '90%',
     alignSelf: 'center',
-    width: '100%',
+    backgroundColor: 'transparent',
   },
   appHeader: {
-    flexDirection: 'row',
+    flexDirection: 'column',
     justifyContent: 'space-between',
-    alignItems: 'center',
     padding: VARS.spacingMd,
-    backgroundColor: VARS.colorSurfacePrimary,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
     elevation: 2,
-    position: 'absolute', // sticky no existe, usar absolute/fixed
-    top: 0,
-    zIndex: 100,
+    textAlign: 'left',
     width: '100%',
   },
   logo: {
@@ -139,7 +131,12 @@ const styles = StyleSheet.create({
   },
   homeBienvenidaText: {
     color: VARS.colorTextSecondary,
-    fontSize: VARS.fontSizeMd, // font-size-md
+    fontSize: VARS.fontSizeXxl, // font-size-md
+  },
+  username:{
+    color: VARS.colorTextPrimary,
+    fontSize: VARS.fontSizeLg,
+    fontWeight: VARS.fontWeightBold,
   },
   newsSectionContainer: {
     marginTop: VARS.spacingMd,

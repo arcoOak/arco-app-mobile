@@ -1,14 +1,17 @@
 // src/context/AuthContext.js
-import React, { createContext, useState, useEffect, useContext, useMemo, useCallback } from 'react';
-import authService from '../services/auth.service';
 
+import React, { createContext, useState, useEffect, useContext, useMemo, useCallback } from 'react';
+import { Platform } from 'react-native';
+import authService from '../services/auth.service';
 import modificarSocio from '../services/modificar.service'; 
 import clubService from '../services/club.service'; // Importa el servicio de club
-
 import billeteraService from '../services/billetera.service'; // Importa el servicio de billetera
-
 import logoLight from '../../assets/images/logo.png'; // Importa tu logo
 import logoDark from '../../assets/images/logo-dark.png'; // Importa tu logo oscuro
+let AsyncStorage;
+if (Platform.OS !== 'web') {
+  AsyncStorage = require('@react-native-async-storage/async-storage').default;
+}
 
 
 // Contexto
@@ -24,36 +27,49 @@ export const AuthProvider = ({ children }) => {
 
   const [saldoBilletera, setSaldoBilletera] = useState(0); // Almacena el saldo de la billetera
 
-  // Inicializa el estado del tema desde localStorage o la preferencia del sistema
-  const [isDarkTheme, setIsDarkTheme] = useState(() => {
-    const savedTheme = localStorage.getItem('theme');
-    if (savedTheme) {
-      return savedTheme === 'dark';
-    }
-    return window.matchMedia('(prefers-color-scheme: dark)').matches;
-  });
+
+  // Inicializa el estado del tema desde almacenamiento persistente o la preferencia del sistema
+  const [isDarkTheme, setIsDarkTheme] = useState(false);
 
   const logo = useMemo(() => {
     return isDarkTheme ? logoDark : logoLight;
   }, [isDarkTheme]);
 
   useEffect(() => {
-    // Aquí puedes intentar cargar los datos del usuario desde localStorage o una cookie
-    // Cuando la aplicación se carga por primera vez
-    setLoading(true);
-    try{
-      const storedUser = localStorage.getItem('currentUser');
-      if (storedUser) {
-        setUser(JSON.parse(storedUser));
-
-      //setIsAuthenticated(true); // Si hay un usuario almacenado, consideramos que está autenticado
-    }} catch (error) {
-      console.error('Error al cargar el usuario desde localStorage:', error);
-      localStorage.removeItem('currentUser'); // Limpiar en caso de error
-      setUser(null); // Asegurarse de que el usuario sea null en caso de error
-    }finally{
-      setLoading(false);
-    }
+    // Cargar usuario y tema desde almacenamiento persistente
+    const loadUserAndTheme = async () => {
+      setLoading(true);
+      try {
+        let storedUser = null;
+        let savedTheme = null;
+        if (Platform.OS === 'web') {
+          storedUser = localStorage.getItem('currentUser');
+          savedTheme = localStorage.getItem('theme');
+        } else if (AsyncStorage) {
+          storedUser = await AsyncStorage.getItem('currentUser');
+          savedTheme = await AsyncStorage.getItem('theme');
+        }
+        if (storedUser) {
+          setUser(JSON.parse(storedUser));
+        }
+        if (savedTheme) {
+          setIsDarkTheme(savedTheme === 'dark');
+        } else if (Platform.OS === 'web') {
+          setIsDarkTheme(window.matchMedia('(prefers-color-scheme: dark)').matches);
+        }
+      } catch (error) {
+        console.error('Error al cargar datos persistentes:', error);
+        if (Platform.OS === 'web') {
+          localStorage.removeItem('currentUser');
+        } else if (AsyncStorage) {
+          await AsyncStorage.removeItem('currentUser');
+        }
+        setUser(null);
+      } finally {
+        setLoading(false);
+      }
+    };
+    loadUserAndTheme();
   }, []);
 
   // Se usa useCallback para memorizar la función y evitar que se recree en cada render,
@@ -85,9 +101,14 @@ export const AuthProvider = ({ children }) => {
   }, [user]);
 
   // Efecto para manejar los cambios de tema: actualiza la clase del body y localStorage
+
   useEffect(() => {
-    document.body.classList.toggle('dark-theme', isDarkTheme);
-    localStorage.setItem('theme', isDarkTheme ? 'dark' : 'light');
+    if (Platform.OS === 'web') {
+      document.body.classList.toggle('dark-theme', isDarkTheme);
+      localStorage.setItem('theme', isDarkTheme ? 'dark' : 'light');
+    } else if (AsyncStorage) {
+      AsyncStorage.setItem('theme', isDarkTheme ? 'dark' : 'light');
+    }
   }, [isDarkTheme]);
 
 
@@ -99,37 +120,36 @@ export const AuthProvider = ({ children }) => {
 
   const login = async (username, password) => {
     setLoading(true);
-    //setError(null);
     try {
-      //console.log('Intentando iniciar sesión con:', { username, password });
       const userData = await authService.loginApi(username, password);
-      //console.log('Datos del usuario recibidos:', userData);
-
-      if(userData.response === false) {
-        //setError('Usuario o contraseña incorrectos');
-        //setLoading(false);
+      // Si el backend responde con un objeto tipo { response: false } para error
+      if (!userData || userData.response === false) {
+        //console.error("Error en el login:", userData);
         return false;
-      }else{
-        setUser(userData);
-        localStorage.setItem('currentUser', JSON.stringify(userData));
-        //setIsAuthenticated(true); // Actualizar el estado de autenticación
-        
-        return true;
       }
-
+      // Si el backend responde con datos de usuario válidos
+      setUser(userData);
+      if (Platform.OS === 'web') {
+        localStorage.setItem('currentUser', JSON.stringify(userData));
+      } else if (AsyncStorage) {
+        await AsyncStorage.setItem('currentUser', JSON.stringify(userData));
+      }
+      return true;
     } catch (err) {
-        console.error("Error en el login:", err);
-        return false;
-
+      //console.error("Error en el login:", err);
+      return false;
     } finally {
       setLoading(false);
     }
   };
 
-  const logout = () => {
+  const logout = async () => {
     setUser(null);
-    //setIsAuthenticated(false);
-    localStorage.removeItem('currentUser'); // Limpiar los datos persistidos
+    if (Platform.OS === 'web') {
+      localStorage.removeItem('currentUser');
+    } else if (AsyncStorage) {
+      await AsyncStorage.removeItem('currentUser');
+    }
     // Aquí podrías notificar a tu API de backend que la sesión ha terminado
     // Redirigir al usuario a la página de login o inicio
   };
@@ -151,7 +171,11 @@ export const AuthProvider = ({ children }) => {
         // Tratar el estado como inmutable: crear un nuevo objeto en lugar de mutar el existente
         const updatedUserData = { ...user, ...updatedFields };
         setUser(updatedUserData);
-        localStorage.setItem('currentUser', JSON.stringify(updatedUserData));
+        if (Platform.OS === 'web') {
+          localStorage.setItem('currentUser', JSON.stringify(updatedUserData));
+        } else if (AsyncStorage) {
+          await AsyncStorage.setItem('currentUser', JSON.stringify(updatedUserData));
+        }
         return true; // Indicar que la edición fue exitosa
       }
       return false; // Indicar que la edición falló

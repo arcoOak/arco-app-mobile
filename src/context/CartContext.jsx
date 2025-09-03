@@ -1,4 +1,10 @@
+
 import React, { createContext, useState, useEffect ,useContext, useMemo } from 'react';
+import { Platform } from 'react-native';
+let AsyncStorage;
+if (Platform.OS !== 'web') {
+    AsyncStorage = require('@react-native-async-storage/async-storage').default;
+}
 
 
 
@@ -9,27 +15,47 @@ export const CartProvider = ({ children }) => {
     const [loading, setLoading] = useState(true); // Para saber si estamos cargando los datos iniciales
     
 
-    // Cargar los datos del carrito desde localStorage al iniciar la aplicación
+
+    // Cargar los datos del carrito desde almacenamiento persistente al iniciar la aplicación
     useEffect(() => {
-        try{
-        const carritoAlmacenado = localStorage.getItem('carrito');
-        if(carritoAlmacenado){
-            setElementosCarrito(JSON.parse(carritoAlmacenado));
-        }
-        } catch (error) {
-            console.error('Error al cargar el carrito desde localStorage:', error);
-            setElementosCarrito([]);
-        } finally{
-            setLoading(false);
-        }
+        const loadCarrito = async () => {
+            try {
+                let carritoAlmacenado = null;
+                if (Platform.OS === 'web') {
+                    carritoAlmacenado = localStorage.getItem('carrito');
+                } else if (AsyncStorage) {
+                    carritoAlmacenado = await AsyncStorage.getItem('carrito');
+                }
+                if (carritoAlmacenado) {
+                    setElementosCarrito(JSON.parse(carritoAlmacenado));
+                }
+            } catch (error) {
+                console.error('Error al cargar el carrito desde almacenamiento persistente:', error);
+                setElementosCarrito([]);
+            } finally {
+                setLoading(false);
+            }
+        };
+        loadCarrito();
     }, []);
 
-    //Guardar los datos del carrito en localStorage cada vez que cambie
+
+    // Guardar los datos del carrito en almacenamiento persistente cada vez que cambie
     useEffect(() => {
-        if(!loading){
-            //console.log('Carrito actualizado:', elementosCarrito);
-            localStorage.setItem('carrito', JSON.stringify(elementosCarrito));
-        }
+        const saveCarrito = async () => {
+            if (!loading) {
+                try {
+                    if (Platform.OS === 'web') {
+                        localStorage.setItem('carrito', JSON.stringify(elementosCarrito));
+                    } else if (AsyncStorage) {
+                        await AsyncStorage.setItem('carrito', JSON.stringify(elementosCarrito));
+                    }
+                } catch (error) {
+                    console.error('Error al guardar el carrito:', error);
+                }
+            }
+        };
+        saveCarrito();
     }, [elementosCarrito, loading]);
 
 
@@ -77,10 +103,19 @@ export const CartProvider = ({ children }) => {
         );
     };
 
-    const limpiarCarrito = ()=>{
+
+    const limpiarCarrito = async () => {
         setElementosCarrito([]); // Limpiar el carrito
-        localStorage.removeItem('carrito'); // Eliminar el carrito del localStorage
-    }
+        try {
+            if (Platform.OS === 'web') {
+                localStorage.removeItem('carrito');
+            } else if (AsyncStorage) {
+                await AsyncStorage.removeItem('carrito');
+            }
+        } catch (error) {
+            console.error('Error al limpiar el carrito:', error);
+        }
+    };
 
     const isProductoEnCarrito = (productId, id_comercio) => {
         return elementosCarrito.some(ele => ele.id_producto === productId && ele.id_comercio === id_comercio);

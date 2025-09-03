@@ -1,12 +1,14 @@
 import { StyleSheet } from 'react-native';
 import { light } from '../../src/css/VariablesBase.styles';
 
+const Variable = light;
+
 export default StyleSheet.create({
   section: {
-    backgroundColor: light.colorSurfacePrimary,
+    backgroundColor: Variable.colorSurfacePrimary,
     borderWidth: 1,
-    borderColor: light.borderColor,
-    borderRadius: light.borderRadiusLg,
+    borderColor: Variable.borderColor,
+    borderRadius: Variable.borderRadiusLg,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.13,
@@ -50,22 +52,26 @@ export default StyleSheet.create({
     justifyContent: 'center',
   },
   title: {
-    color: light.colorTextPrimary,
+    color: Variable.colorTextPrimary,
     marginBottom: 5,
     fontSize: 18,
     fontWeight: 'bold',
   },
+  label:{
+    color: Variable.colorTextPrimary,
+    marginBottom: 5,
+    fontSize: Variable.fontSizeMd,
+  },
   description: {
-    color: light.colorTextSecondary,
-    fontSize: 14,
-    lineHeight: 21,
+    color: Variable.colorTextSecondary,
+    fontSize: Variable.fontSizeSm,
   },
   progressButton: {
     backgroundColor: '#4070f4',
     marginTop: 8,
     paddingVertical: 7,
     paddingHorizontal: 15,
-    borderRadius: light.borderRadiusMd,
+    borderRadius: Variable.borderRadiusMd,
     alignSelf: 'flex-start',
   },
 });

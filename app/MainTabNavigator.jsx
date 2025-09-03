@@ -16,11 +16,11 @@ import Perfil from './Perfil/Perfil';
 const Tab = createBottomTabNavigator();
 
 const menuItems = [
-    { name: "Inicio", component: Home, icon: "home-alt-2" },
-    { name: "Espacios", component: Espacios, icon: "calendar-alt" },
-    { name: "QR", component: LecturaQr, icon: "qr-scan" },
-    { name: "Comercios", component: Comercio, icon: "store" },
-    { name: "Perfil", component: Perfil, icon: "user" },
+    { name: "Inicio", component: Home, icon: "home" },
+    { name: "Espacios", component: Espacios, icon: "calendar" },
+    { name: "QR", component: LecturaQr, icon: "qr-code" },
+    { name: "Comercios", component: Comercio, icon: "storefront" },
+    { name: "Perfil", component: Perfil, icon: "person" },
 ];
 
 export default function MainTabNavigator() {
@@ -32,8 +32,8 @@ export default function MainTabNavigator() {
                 headerShown: false,
                 tabBarIcon: ({ focused, color, size }) => {
                     const item = menuItems.find(item => item.name === route.name);
-                    // Muestra un icono sólido (bxs) si está enfocado, si no, el regular (bx)
-                    const iconName = focused ? `bxs-${item.icon}` : `bx-${item.icon}`;
+                    // Muestra un icono sólido si está enfocado, si no, el de contorno
+                    const iconName = focused ? item.icon : `${item.icon}-outline`;
                     return <Icon name={iconName} size={size} color={color} />;
                 },
                 // Colores para los íconos y etiquetas de la barra

@@ -7,6 +7,10 @@ import LoadingModal from '../components/modals/LoadingModal';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import styles from './Login.styles';
 
+import loginImage from '../assets/images/bg-pool3.jpg'; 
+
+import { useRouter } from 'expo-router';
+
 export default function Login() {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
@@ -14,19 +18,25 @@ export default function Login() {
     const [showPassword, setShowPassword] = useState(false);
     const { login, isAuthenticated, loading, logo } = useAuth();
 
+    const router = useRouter();
+
     useEffect(() => {
         if (isAuthenticated) {
             // Aquí podrías navegar a la pantalla principal usando el router de Expo
             // Por ejemplo: router.replace('/(tabs)');
+            router.replace('/');
         }
-    }, [isAuthenticated]);
+    }, [isAuthenticated, router]);
 
     const handleLogin = async () => {
         setError('');
         if (username && password) {
             const success = await login(username, password);
+            console.log('Login success:', success);
             if (!success) {
                 setError('Usuario o contraseña incorrectos.');
+            }else{
+                router.replace('/');
             }
         } else {
             setError('Usuario o contraseña incorrectos.');
@@ -41,11 +51,11 @@ export default function Login() {
             <ScrollView contentContainerStyle={styles.container} keyboardShouldPersistTaps="handled">
                 <View style={styles.appLogoHeader}>
                     {logo && (
-                        <Image source={{ uri: logo }} style={styles.appLogoHeaderImg} resizeMode="contain" />
+                        <Image source={typeof logo === 'string' ? { uri: logo } : logo} style={styles.appLogoHeaderImg} />
                     )}
                 </View>
                 <View style={styles.loginContainer}>
-                    <View style={styles.loginImage} />
+                    <Image source={loginImage} style={styles.loginImage} />
                     <View style={styles.loginFormArea}>
                         <Text style={styles.loginFormTitle}>Iniciar Sesión</Text>
                         <View style={styles.inputGroup}>
@@ -87,11 +97,6 @@ export default function Login() {
                             )}
                         </TouchableOpacity>
                     </View>
-                </View>
-                <View style={styles.footer}>
-                    <Text style={styles.footerText}>© 2025 Oak Tree C.A.</Text>
-                    <Text style={styles.footerText}>Todos los derechos reservados.</Text>
-                    <Text style={styles.footerText}>Política de Privacidad | Términos de Uso</Text>
                 </View>
                 <LoadingModal visible={loading} mensaje="Validando..." />
             </ScrollView>

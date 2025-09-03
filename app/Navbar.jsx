@@ -91,7 +91,7 @@ const Navbar = () => {
                             </TouchableOpacity>
                         ))}
                     </View>
-                    <View style={{ height: 1, backgroundColor: '#e0e0e0', marginVertical: 12 }} />
+                    <View style={{ height: 1, marginVertical: 12 }} />
                     {/* Sidebar Menu */}
                     <View style={NavbarStyles.menuList}>
                         {menuItems.map((item) => (
