@@ -1,5 +1,5 @@
 import { StyleSheet } from 'react-native';
-import Variables from '../../constants/VariablesBase.styles';
+import Variables from '../../src/css/VariablesBase.styles';
 
 export default StyleSheet.create({
   flotante: {

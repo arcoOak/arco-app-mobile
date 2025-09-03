@@ -1,4 +1,5 @@
-const API_HOST = import.meta.env.VITE_API_HOST;
+import Constants from 'expo-constants';
+const API_HOST = Constants.expoConfig?.extra?.EXPO_PUBLIC_API_HOST;
 
 const getTransaccionPorId = (id_billetera_transaccion) =>{
     return fetch(`${API_HOST}/api/transacciones/${id_billetera_transaccion}`)

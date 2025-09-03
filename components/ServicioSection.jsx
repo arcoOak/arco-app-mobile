@@ -4,7 +4,7 @@ import { View, Text, ScrollView } from 'react-native';
 import TrainerCard from './TrainerCard';
 import { useAuth } from '../src/context/AuthContext';
 import serviciosService from '../src/services/servicios.service';
-import servicioImagePlaceholder from '../assets/comercio_placeholder.webp';
+import servicioImagePlaceholder from '../assets/images/comercio_placeholder.webp';
 import Button from './buttons/Button';
 
 const ServicioSection = ({ navigation }) => {

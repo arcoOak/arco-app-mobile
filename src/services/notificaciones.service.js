@@ -1,6 +1,7 @@
 
 
-const API_HOST = import.meta.env.VITE_API_HOST;
+import Constants from 'expo-constants';
+const API_HOST = Constants.expoConfig?.extra?.EXPO_PUBLIC_API_HOST;
 
 const getAllNotificaciones = async (id_usuario) => {
     const response = await fetch(`${API_HOST}/api/notificaciones/${id_usuario}`,{

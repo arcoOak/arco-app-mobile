@@ -98,7 +98,6 @@ const styles = StyleSheet.create({
     marginTop: 16,
     paddingTop: 16,
     borderTopWidth: 1,
-    borderTopColor: COLORS.borderPrimary,
   },
   calendarGrid: {
     flexDirection: 'row',

@@ -1,4 +1,5 @@
-const API_HOST = import.meta.env.VITE_API_HOST;
+import Constants from 'expo-constants';
+const API_HOST = Constants.expoConfig?.extra?.EXPO_PUBLIC_API_HOST;
 
 const modificarSocioData = async (socioNuevaData, id_socio) => {
     const response = await fetch(`${API_HOST}/api/socios/${id_socio}`, {

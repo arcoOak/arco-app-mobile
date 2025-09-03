@@ -1,19 +1,11 @@
-import React, { useState, useMemo, useRef, useEffect, use  } from "react";
-import { useNavigate } from 'react-router-dom'; // Import useNavigate
-import "./TarjetaPendientes.css";
-
-import { useAuth } from '../../context/AuthContext'; // Importa el contexto de autenticación
-
-import transaccionesService from '../../services/transacciones.service';
-
 
 import React, { useState, useMemo, useEffect } from 'react';
 import { View, Text, ScrollView, TouchableOpacity } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome6';
 import styles from './TarjetaPendientes.styles';
 import Button from '../buttons/Button';
-import { useAuth } from '../../context/AuthContext';
-import transaccionesService from '../../services/transacciones.service';
+import { useAuth } from '../../src/context/AuthContext';
+import transaccionesService from '../../src/services/transacciones.service';
 
 export default function TarjetaPendientes({ onMesClick, onPagarClick }) {
     const [mesSeleccionado, setMesSeleccionado] = useState(new Date().getMonth() + 1);

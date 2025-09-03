@@ -1,5 +1,6 @@
 
-const API_HOST = import.meta.env.VITE_API_HOST;
+import Constants from 'expo-constants';
+const API_HOST = Constants.expoConfig?.extra?.EXPO_PUBLIC_API_HOST;
 
 
 const loginApi = async (username, password) => {

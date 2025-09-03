@@ -97,9 +97,7 @@ function AppNavigator() {
                         <Stack.Screen name="TransaccionIndividual" component={TransaccionIndividual} options={{ headerShown: true, title: 'Transacción' }} />
                         <Stack.Screen name="Noticias" component={Noticias} options={{ headerShown: true, title: 'Noticias' }} />
                         <Stack.Screen name="NoticiasDetalle" component={NoticiasDetalle} options={{ headerShown: true, title: 'Detalle' }} />
-                        <Stack.Screen name="EditarPerfil" options={{ headerShown: true, title: 'Editar Perfil' }}>
-                            {(props) => <EditarPerfil {...props} user={user} />}
-                        </Stack.Screen>
+                        <Stack.Screen name="EditarPerfil" component={EditarPerfil} options={{ headerShown: true, title: 'Editar Perfil' }} />
                         <Stack.Screen name="BeneficiariosLista" component={BeneficiariosLista} options={{ headerShown: true, title: 'Beneficiarios' }} />
                         <Stack.Screen name="EspaciosDetalle" component={EspaciosDetalle} options={{ headerShown: true, title: 'Detalle del Espacio' }} />
                         <Stack.Screen name="Comercios" component={Comercios} options={{ headerShown: true, title: 'Comercios' }} />
@@ -140,10 +138,5 @@ function App() {
         </AuthProvider>
     );
 }
-
-
-StyleSheet.create({
-
-});
 
 export default App;

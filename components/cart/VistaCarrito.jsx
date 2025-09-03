@@ -12,7 +12,7 @@ import { useAuth } from '../../src/context/AuthContext.jsx';
 import compraService from '../../src/services/compra.service.js';
 import productosService from '../../src/services/producto.service.js';
 import hamburguesaPlaceholder from '../../assets/hamburguesa.png';
-import { TIPOS_TRANSACCION } from '../../src/constants/transaccion.constants.js';
+import { TIPOS_TRANSACCION } from '../../constants/transaccion.constants.js';
 
 function VistaCarrito({ visible, onClose }) {
     const { elementosCarrito, removeFromCarrito, updateCantidad, limpiarCarrito } = useCarrito();

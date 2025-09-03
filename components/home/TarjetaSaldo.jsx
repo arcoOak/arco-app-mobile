@@ -3,7 +3,7 @@ import React, { useRef, useState } from 'react';
 import { View, Animated, TouchableOpacity, Dimensions } from 'react-native';
 import CreditCard from '../CreditCard';
 import styles from './TarjetaSaldo.styles';
-import { useAuth } from '../../context/AuthContext';
+import { useAuth } from '../../src/context/AuthContext';
 
 const cardData = [
     {

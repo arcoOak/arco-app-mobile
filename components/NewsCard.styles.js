@@ -1,5 +1,7 @@
 import { StyleSheet } from 'react-native';
-import Variables from '../constants/VariablesBase.styles';
+import {light} from '../src/css/VariablesBase.styles';
+
+const Variables = light;
 
 export default StyleSheet.create({
   card: {

@@ -49,7 +49,6 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 16,
     fontWeight: '600',
-    color: COLORS.text,
     marginTop: 10,
     marginBottom: 10,
     marginHorizontal: 20,

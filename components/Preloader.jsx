@@ -2,6 +2,8 @@
 import React, { useRef, useEffect } from 'react';
 import { View, Image, Animated, Easing } from 'react-native';
 
+import logo from '../assets/images/logo.png';
+
 export default function Preloader() {
     const spinAnim = useRef(new Animated.Value(0)).current;
 
@@ -24,7 +26,7 @@ export default function Preloader() {
     return (
         <View style={{ alignItems: 'center', justifyContent: 'center', flex: 1 }}>
             <Image
-                source={require('../src/img/logo.png')}
+                source={logo}
                 style={{ width: 80, height: 80, marginBottom: 24 }}
                 accessibilityLabel="Cargando..."
             />

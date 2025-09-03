@@ -5,10 +5,10 @@ import NewsCard from './NewsCard';
 import { useAuth } from '../src/context/AuthContext';
 import noticiasService from '../src/services/noticias.service';
 import Button from './buttons/Button';
-import placeholder_1 from '../img/news/placeholder_1.jpg';
-import placeholder_2 from '../img/news/placeholder_2.jpg';
-import placeholder_3 from '../img/news/placeholder_3.jpg';
-import placeholder_4 from '../img/news/placeholder_4.jpg';
+import placeholder_1 from '../assets/images/news/placeholder_1.jpg';
+import placeholder_2 from '../assets/images/news/placeholder_2.jpg';
+import placeholder_3 from '../assets/images/news/placeholder_3.jpg';
+import placeholder_4 from '../assets/images/news/placeholder_4.jpg';
 
 const NewsSection = ({ navigation }) => {
     const { user } = useAuth();

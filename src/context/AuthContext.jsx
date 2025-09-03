@@ -7,8 +7,8 @@ import clubService from '../services/club.service'; // Importa el servicio de cl
 
 import billeteraService from '../services/billetera.service'; // Importa el servicio de billetera
 
-import logoLight from '../img/logo.png'; // Importa tu logo
-import logoDark from '../img/logo-dark.png'; // Importa tu logo oscuro
+import logoLight from '../../assets/images/logo.png'; // Importa tu logo
+import logoDark from '../../assets/images/logo-dark.png'; // Importa tu logo oscuro
 
 
 // Contexto
@@ -20,7 +20,7 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null); // Almacena los datos del usuario o null si no está autenticado
   const [clubInfo, setClubInfo] = useState(null); // Almacena la información del club
   //const [isAuthenticated, setIsAuthenticated] = useState(!!user); // Para saber si el usuario está autenticado
-  const [loading, setLoading] = useState(true); // Para saber si estamos cargando los datos iniciales
+  const [loading, setLoading] = useState(false); // Para saber si estamos cargando los datos iniciales
 
   const [saldoBilletera, setSaldoBilletera] = useState(0); // Almacena el saldo de la billetera
 
