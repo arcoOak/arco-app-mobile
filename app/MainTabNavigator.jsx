@@ -39,6 +39,7 @@ export default function MainTabNavigator() {
                 // Colores para los íconos y etiquetas de la barra
                 tabBarActiveTintColor: '#007AFF', // Un color activo de ejemplo
                 tabBarInactiveTintColor: 'gray',
+                
             })}
         >
             {menuItems.map((item) => (

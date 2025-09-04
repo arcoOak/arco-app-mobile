@@ -12,7 +12,7 @@ export default function TabLayout() {
 
   if (Platform.OS === 'web') {
     return (
-      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#fff' }}>
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center'}}>
         <Text style={{ fontSize: 18, color: '#333', textAlign: 'center', padding: 32 }}>
           La navegación por pestañas solo está disponible en la app móvil. Usa Expo Go o un emulador para probar la app completa.
         </Text>

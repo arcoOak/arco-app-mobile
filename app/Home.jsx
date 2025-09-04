@@ -26,6 +26,7 @@ export default function Home() {
         );
     }
     return (
+        <>
         <ScrollView style={HomeStyles.app} contentContainerStyle={{ paddingBottom: 32 }}>
             <View style={HomeStyles.appHeader}>
                 
@@ -47,5 +48,6 @@ export default function Home() {
                 <RedesSocialesHome />
             </View>
         </ScrollView>
+        </>
     );
 }

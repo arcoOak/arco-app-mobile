@@ -21,7 +21,7 @@ function ThemedBackgroundWrapper({ children }) {
   return (
     <ImageBackground
       source={isDarkTheme ? backgroundDomexDark : backgroundDomexLight}
-      style={{ flex: 1, backgroundColor: isDarkTheme ? 'black' : 'transparent' }}
+      style={{ flex: 1 }}
       resizeMode="cover"
     >
       {children}
